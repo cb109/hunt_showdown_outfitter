@@ -262,7 +262,7 @@
               :timeout="snackbar.timeout"
               :color="snackbar.color"
             >
-              <v-icon class="mr-2">mdi-check</v-icon>
+              <v-icon class="mr-2">{{ snackbar.icon }}</v-icon>
               {{ snackbar.text }}
 
               <template v-slot:action="{ attrs }">
@@ -329,64 +329,7 @@
               9: "Consumable 3",
               10: "Consumable 4",
             },
-            loadouts: [
-              {
-                id: 1,
-                label: "Vetterli / Officer",
-                1: "Vetterli 71 Karabiner",
-                2: "Nagant M1895 Officer",
-                3: "Knuckle Knife",
-                4: "First Aid Kit",
-                5: "Fusees",
-                6: "Choke Bombs",
-                7: "Vitality Shot",
-                8: "Fire Bomb",
-                9: "Weak Antidote Shot",
-                10: "Dynamite Stick",
-              },
-              {
-                id: 2,
-                label: "Sparks / Frag",
-                1: "The Reckoning",
-                2: "Copperhead",
-                3: "The Tanto",
-                4: "The Marrow",
-                5: "Dusters",
-                6: "Choke Bombs",
-                7: "Vitality Shot",
-                8: "Fire Bomb",
-                9: "Weak Antidote Shot",
-                10: "Frag Bomb",
-              },
-              {
-                id: 3,
-                label: 'Base without Weapons',
-                1: "",
-                2: "",
-                3: "Knuckle Knife",
-                4: "First Aid Kit",
-                5: "Fusees",
-                6: "Choke Bombs",
-                7: "Vitality Shot",
-                8: "Fire Bomb",
-                9: "Weak Antidote Shot",
-                10: "Dynamite Stick",
-              },
-              {
-                id: 4,
-                label: 'Nothing',
-                1: "",
-                2: "",
-                3: "",
-                4: "",
-                5: "",
-                6: "",
-                7: "",
-                8: "",
-                9: "",
-                10: "",
-              },
-            ],
+            loadouts: [],
           };
         },
         computed: {
@@ -424,6 +367,9 @@
             return this.loadouts.sort(compareByLabel);
           },
         },
+        mounted() {
+          eel.load_data_from_last_filepath_in_userdir();
+        },
         methods: {
           exportToFile() {
             eel.choose_file_and_export_to(this.fileData);
@@ -433,16 +379,18 @@
           },
           loadFileData(data) {
             this.loadouts = data.loadouts;
-            this.showSnackbarText('Loadouts imported', 3000, 'info');
           },
           equipLoadout(loadout) {
             this.showSnackbarText('Equipping "' + loadout.label + '"...');
             eel.put_hunt_in_foreground_and_equip_loadout(loadout);
           },
-          showSnackbarText(text, timeout = 1000, color = 'success') {
+          showSnackbarText(
+            text, timeout = 1000, color = 'success', icon = 'mdi-check'
+          ) {
             this.snackbar.text = text;
             this.snackbar.timeout = timeout;
             this.snackbar.color = color;
+            this.snackbar.icon = icon;
             this.snackbar.show = true;
           },
           getHighestId() {
@@ -525,8 +473,8 @@
         },
       });
 
-      function feedback(text, timeout = 1000, color = 'success') {
-        window.app.showSnackbarText(text, timeout, color);
+      function feedback(text, timeout = 1000, color = 'success', icon = 'mdi-check') {
+        window.app.showSnackbarText(text, timeout, color, icon);
       }
       function loadFileData(data) {
         window.app.loadFileData(data);

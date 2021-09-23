@@ -13,6 +13,8 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL import ImageDraw, ImageFont
 
+import os
+
 # We'll use module level state to avoid running more than one Hunt
 # automation command at a time.
 this = sys.modules[__name__]
@@ -58,7 +60,7 @@ def set_hunt_showdown_as_foreground_window() -> bool:
     if not game_window:
         message = f"Window titled '{GAME_WINDOW_TITLE}' could not be found"
         print(message)
-        eel.feedback(message, 3000, "error")
+        eel.feedback(message, 3000, "error", "mdi-alert-outline")
         return False
 
     game_window.minimize()
@@ -178,6 +180,43 @@ def busy_locked(func):
     return inner
 
 
+def get_userdir_memory_filepath():
+    home = os.path.expanduser("~")
+    return os.path.join(home, "hunt_showdown_outfitter.json")
+
+
+def save_last_filepath_to_userdir(filepath):
+    memory_filepath = get_userdir_memory_filepath()
+    data = {"last_filepath": filepath}
+    with open(memory_filepath, "w") as f:
+        f.write(json.dumps(data, indent=2, sort_keys=True))
+
+
+@busy_locked
+@eel.expose()
+def load_data_from_last_filepath_in_userdir():
+    memory_filepath = get_userdir_memory_filepath()
+    if not os.path.isfile(memory_filepath):
+        return
+    try:
+        with open(memory_filepath) as f:
+            data = json.loads(f.read())
+            last_filepath = data["last_filepath"]
+
+        with open(last_filepath) as f:
+            data = json.loads(f.read())
+            eel.loadFileData(data)
+            eel.feedback(
+                f"Loadouts imported from: {last_filepath}",
+                6000,
+                "info",
+                "mdi-information-outline",
+            )
+
+    except Exception as err:
+        print(err)
+
+
 @busy_locked
 @eel.expose()
 def choose_file_and_export_to(data):
@@ -191,7 +230,12 @@ def choose_file_and_export_to(data):
     file_handle.write(json.dumps(data, indent=2, sort_keys=True))
     file_handle.close()
 
-    eel.feedback(f"File written to: {file_handle.name}", 3000, "info")
+    filepath = file_handle.name
+    save_last_filepath_to_userdir(filepath)
+
+    eel.feedback(
+        f"File written to: {filepath}", 3000, "info", "mdi-information-outline"
+    )
 
 
 @busy_locked
@@ -212,7 +256,14 @@ def choose_file_and_import_from():
     finally:
         file_handle.close()
 
+    filepath = file_handle.name
+
     eel.loadFileData(data)
+    eel.feedback(
+        f"Loadouts imported from: {filepath}", 3000, "info", "mdi-information-outline"
+    )
+
+    save_last_filepath_to_userdir(filepath)
 
 
 @busy_locked
