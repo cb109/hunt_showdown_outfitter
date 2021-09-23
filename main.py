@@ -4,10 +4,13 @@
 import random
 from collections import namedtuple
 
+import json
 import sys
 import eel
 import pyautogui
 import pygetwindow
+import tkinter as tk
+from tkinter import filedialog
 from PIL import ImageDraw, ImageFont
 
 # We'll use module level state to avoid running more than one Hunt
@@ -47,11 +50,15 @@ REMOVE_FILTERS_BUTTON = Point(x=1660, y=225)
 
 
 def set_hunt_showdown_as_foreground_window() -> bool:
-    windows = pygetwindow.getWindowsWithTitle(GAME_WINDOW_TITLE)
-    try:
-        game_window = windows[0]
-    except IndexError:
-        print(f"Window titled '{GAME_WINDOW_TITLE}' could not be found")
+    game_window = None
+    for window in pygetwindow.getWindowsWithTitle(GAME_WINDOW_TITLE):
+        if window.title == GAME_WINDOW_TITLE:
+            game_window = window
+            break
+    if not game_window:
+        message = f"Window titled '{GAME_WINDOW_TITLE}' could not be found"
+        print(message)
+        eel.feedback(message, 3000, "error")
         return False
 
     game_window.minimize()
@@ -158,6 +165,57 @@ def _debug_item_slots_in_screenshot():
     image.save()
 
 
+def busy_locked(func):
+    def inner(*args, **kwargs):
+        if this.busy:
+            return
+        this.busy = True
+        try:
+            return func(*args, **kwargs)
+        finally:
+            this.busy = False
+
+    return inner
+
+
+@busy_locked
+@eel.expose()
+def choose_file_and_export_to(data):
+    root = tk.Tk()
+    root.withdraw()
+
+    file_handle = filedialog.asksaveasfile(
+        defaultextension=".json",
+        filetypes=(("JSON", "*.json"),),
+    )
+    file_handle.write(json.dumps(data, indent=2, sort_keys=True))
+    file_handle.close()
+
+    eel.feedback(f"File written to: {file_handle.name}", 3000, "info")
+
+
+@busy_locked
+@eel.expose()
+def choose_file_and_import_from():
+    root = tk.Tk()
+    root.withdraw()
+
+    file_handle = filedialog.askopenfile(
+        defaultextension=".json",
+        filetypes=(("JSON", "*.json"),),
+    )
+    try:
+        data = json.loads(file_handle.read())
+    except Exception as err:
+        print(err)
+        return
+    finally:
+        file_handle.close()
+
+    eel.loadFileData(data)
+
+
+@busy_locked
 @eel.expose()
 def put_hunt_in_foreground_and_equip_loadout(loadout: dict):
     """Equip given loadout in the running Hunt instance.
@@ -182,16 +240,10 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict):
     Please note all incoming keys are strings, not numbers.
 
     """
-    if this.busy:
-        return
     if not set_hunt_showdown_as_foreground_window():
         return
 
-    this.busy = True
-    try:
-        equip_loadout(loadout)
-    finally:
-        this.busy = False
+    equip_loadout(loadout)
 
 
 def open_gui():
