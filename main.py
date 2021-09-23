@@ -9,6 +9,7 @@ import random
 import sys
 from collections import namedtuple
 
+import eel
 import pyautogui
 import pygetwindow
 from PIL import ImageDraw, ImageFont
@@ -257,12 +258,18 @@ def main(loadout_index):
     # _debug_item_slots_in_screenshot()
 
 
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    try:
-        loadout_index = int(args[0])
-    except (IndexError, TypeError):
-        print("Usage: python main.py <loadout-index>")
-        sys.exit(1)
+def open_gui():
+    eel.init("frontend")
+    eel.start("index.html", size=(520, 560), port=8066)
 
-    main(loadout_index)
+
+if __name__ == "__main__":
+    open_gui()
+    # args = sys.argv[1:]
+    # try:
+    #     loadout_index = int(args[0])
+    # except (IndexError, TypeError):
+    #     print("Usage: python main.py <loadout-index>")
+    #     sys.exit(1)
+
+    # main(loadout_index)

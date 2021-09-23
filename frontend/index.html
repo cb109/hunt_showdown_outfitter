@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Hunt: Showdown - Outfitter</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/vuetify@2.5.8/dist/vuetify.min.css"
+      rel="stylesheet"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-main>
+          <v-container>
+            <h2 class="mb-4">Loadouts</h2>
+            <v-btn color="primary" class="mb-4" text disabled>
+              <v-icon left>mdi-plus-thick</v-icon> Create
+            </v-btn>
+            <v-btn color="primary" class="mb-4" text disabled>
+              <v-icon left>mdi-file-export-outline</v-icon> Export
+            </v-btn>
+            <v-btn color="primary" class="mb-4" text disabled>
+              <v-icon left>mdi-file-import-outline</v-icon> Import
+            </v-btn>
+            <div
+              v-for="(loadout, loadoutIndex) in loadouts"
+              :key="'loadout-' + loadoutIndex"
+            >
+              <v-layout>
+                <h3 class="mb-2 mr-auto">
+                  <v-icon class="mr-2">mdi-format-list-bulleted-square</v-icon>
+                  {{ loadout.label }}
+                </h3>
+                <v-btn color="primary" text @click="createNewLoadout()">
+                  <v-icon left>mdi-play</v-icon> Equip
+                </v-btn>
+              </v-layout>
+              <v-simple-table dense>
+                <template v-slot:default>
+                  <tbody>
+                    <tr
+                      v-for="item of getItems(loadout)"
+                      :key="'item-row-' + item.index"
+                    >
+                      <td
+                        class="text-right"
+                        :class="itemSlotColors[item.index]"
+                      >
+                        {{ itemSlotLabels[item.index] }}
+                      </td>
+                      <td
+                        class="clickable"
+                        @click="editLoadoutItem(loadout, item.index)"
+                      >
+                        {{ item.name }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </div>
+            <!-- Edit Loadout Item Dialog -->
+            <v-dialog v-model="editing.showDialog" width="500">
+              <v-card>
+                <v-card-title v-if="editing.loadout !== null">
+                  <v-icon class="mr-2">mdi-format-list-bulleted-square</v-icon>
+                  {{ editing.loadout.label }}
+                </v-card-title>
+                <v-card-text>
+                  <v-layout align-center>
+                    <div
+                      class="mt-4 mr-4"
+                      :class="itemSlotColors[editing.itemIndex]"
+                    >
+                      {{ itemSlotLabels[editing.itemIndex] }}
+                    </div>
+                    <v-text-field
+                      ref="itemname"
+                      v-model="editing.itemName"
+                      hide-details
+                      @keyup.esc="editing.showDialog = false"
+                      @keyup.enter="saveEditedLoadoutItem()"
+                    ></v-text-field>
+                  </v-layout>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="secondary"
+                    text
+                    @click="editing.showDialog = false"
+                  >
+                    Cancel
+                  </v-btn>
+                  <v-btn color="primary" text @click="saveEditedLoadoutItem()">
+                    Save
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-container>
+        </v-main>
+      </v-app>
+    </div>
+    <script type="text/javascript" src="/eel.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.8/dist/vuetify.min.js"></script>
+    <script>
+      new Vue({
+        el: "#app",
+        vuetify: new Vuetify(),
+        data() {
+          return {
+            editing: {
+              showDialog: false,
+              loadout: null,
+              itemIndex: null,
+              itemName: null,
+            },
+            itemSlotColors: {
+              1: "red--text text--darken-1",
+              2: "red--text text--darken-2",
+              3: "green--text text--darken-1",
+              4: "green--text text--darken-2",
+              5: "green--text text--darken-3",
+              6: "green--text text--darken-4",
+              7: "blue--text text--darken-1",
+              8: "blue--text text--darken-2",
+              9: "blue--text text--darken-3",
+              10: "blue--text text--darken-4",
+            },
+            itemSlotLabels: {
+              1: "Weapon 1",
+              2: "Weapon 2",
+              3: "Tools 1",
+              4: "Tools 2",
+              5: "Tools 3",
+              6: "Tools 4",
+              7: "Consumables 1",
+              8: "Consumables 2",
+              9: "Consumables 3",
+              10: "Consumables 4",
+            },
+            loadouts: [
+              {
+                label: "Vetterli / Officer",
+                1: "Vetterli 71 Karabiner",
+                2: "Nagant M1895 Officer",
+                3: "Knuckle Knife",
+                4: "First Aid Kit",
+                5: "Fusees",
+                6: "Choke Bombs",
+                7: "Vitality Shot",
+                8: "Fire Bomb",
+                9: "Weak Antidote Shot",
+                10: "Dynamite Stick",
+              },
+            ],
+          };
+        },
+        methods: {
+          getItems(loadout) {
+            const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            return keys.map((key) => {
+              return { index: key, name: loadout[key] };
+            });
+          },
+          editLoadoutItem(loadout, itemIndex) {
+            this.editing.loadout = loadout;
+            this.editing.itemIndex = itemIndex;
+            this.editing.itemName = loadout[itemIndex];
+            this.editing.showDialog = true;
+            this.$nextTick(() => {
+              const vm = this;
+              setTimeout(() => {
+                vm.$refs.itemname.focus();
+              });
+            });
+          },
+          saveEditedLoadoutItem() {
+            this.editing.loadout[this.editing.itemIndex] =
+              this.editing.itemName;
+            this.editing.showDialog = false;
+          },
+        },
+      });
+    </script>
+    <style>
+      [dbg],
+      [dbg--deep],
+      [dbg--deep] *,
+      .dbg,
+      .dbg--deep,
+      .dbg--deep * {
+        outline: 1px solid red !important;
+      }
+
+      .clickable {
+        cursor: pointer;
+      }
+    </style>
+  </body>
+</html>
