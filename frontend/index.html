@@ -99,7 +99,7 @@
               </v-col>
               <!-- Right column -->
               <v-col v-if="editing.loadout" class="mt-3">
-                <div class="caption mt-3 mb-1">Name of Loadout</div>
+                <div class="title mt-3 mb-3">Name of Loadout</div>
                 <v-row class="mb-5">
                   <v-col>
                     <!-- Label -->
@@ -112,20 +112,20 @@
                       outlined
                       class="pt-0"
                     />
-                  </v-col>
+            mb-2       </v-col>
                 </v-row>
                 <!-- Weapons -->
-                <div class="caption mt-3 mb-1">Weapons</div>
+                <div class="title mt-3 mb-3">Weapons</div>
                 <v-row dense>
                   <v-col>
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[1]"
-                      :placeholder="itemSlotLabels[1]"
+                      :label="itemSlotLabels[1]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                 </v-row>
@@ -134,107 +134,107 @@
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[2]"
-                      :placeholder="itemSlotLabels[2]"
+                      :label="itemSlotLabels[2]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                 </v-row>
                 <!-- Tools -->
-                <div class="caption mt-3 mb-1">Tools</div>
+                <div class="title mt-3 mb-3">Tools</div>
                 <v-row dense>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[3]"
-                      :placeholder="itemSlotLabels[3]"
+                      :label="itemSlotLabels[3]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[4]"
-                      :placeholder="itemSlotLabels[4]"
+                      :label="itemSlotLabels[4]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[5]"
-                      :placeholder="itemSlotLabels[5]"
+                      :label="itemSlotLabels[5]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[6]"
-                      :placeholder="itemSlotLabels[6]"
+                      :label="itemSlotLabels[6]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                 </v-row>
                 <!-- Consumables -->
-                <div class="caption mt-3 mb-1">Consumables</div>
+                <div class="title mt-3 mb-3">Consumables</div>
                 <v-row dense>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[7]"
-                      :placeholder="itemSlotLabels[7]"
+                      :label="itemSlotLabels[7]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[8]"
-                      :placeholder="itemSlotLabels[8]"
+                      :label="itemSlotLabels[8]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[9]"
-                      :placeholder="itemSlotLabels[9]"
+                      :label="itemSlotLabels[9]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[10]"
-                      :placeholder="itemSlotLabels[10]"
+                      :label="itemSlotLabels[10]"
                       hide-details
                       clearable
                       outlined
-                      class="pt-0"
+                      class="pt-0 mb-2"
                     />
                   </v-col>
                 </v-row>
@@ -259,6 +259,7 @@
             </v-row>
             <v-snackbar
               v-model="snackbar.show"
+              top
               :timeout="snackbar.timeout"
               :color="snackbar.color"
             >

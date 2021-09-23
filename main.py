@@ -224,9 +224,12 @@ def choose_file_and_export_to(data):
     root.withdraw()
 
     file_handle = filedialog.asksaveasfile(
+        parent=root,
         defaultextension=".json",
         filetypes=(("JSON", "*.json"),),
     )
+    if not file_handle:
+        return
     file_handle.write(json.dumps(data, indent=2, sort_keys=True))
     file_handle.close()
 
@@ -245,9 +248,12 @@ def choose_file_and_import_from():
     root.withdraw()
 
     file_handle = filedialog.askopenfile(
+        parent=root,
         defaultextension=".json",
         filetypes=(("JSON", "*.json"),),
     )
+    if not file_handle:
+        return
     try:
         data = json.loads(file_handle.read())
     except Exception as err:
@@ -299,7 +305,7 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict):
 
 def open_gui():
     eel.init("frontend")
-    eel.start("index.html", size=(1024, 720), port=8066)
+    eel.start("index.html", size=(1280, 800), port=8066)
 
 
 if __name__ == "__main__":
