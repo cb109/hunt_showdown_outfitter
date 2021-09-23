@@ -23,53 +23,71 @@
     <div id="app">
       <v-app>
         <v-main>
-          <v-container style="height: 100%">
-            <v-row align="center">
-              <v-col>
-                <h1>Hunt: Showdown Outfitter</h1>
-              </v-col>
+          <v-container class="fill-height">
+            <v-row
+              justify="center"
+              align="center"
+              class="mt-4"
+            >
+              <h1>Hunt: Showdown Outfitter</h1>
               <v-spacer></v-spacer>
-              <v-col>
-                <v-btn text color="success" @click="startNewLoadout()">
-                  <v-icon left>mdi-plus-thick</v-icon> Loadout
-                </v-btn>
-                <v-btn text disabled>
-                  <v-icon left>mdi-file-export-outline</v-icon> Export
-                </v-btn>
-                <v-btn text disabled>
-                  <v-icon left>mdi-file-import-outline</v-icon> Import
-                </v-btn>
-              </v-col>
+              <v-btn text disabled>
+                <v-icon left>mdi-file-export-outline</v-icon> Export
+              </v-btn>
+              <v-btn text disabled>
+                <v-icon left>mdi-file-import-outline</v-icon> Import
+              </v-btn>
             </v-row>
-            <v-row style="height: 100%">
+            <v-row class="fill-height">
               <!-- Left column -->
-              <v-col cols="5">
-                <h2 class="mb-4">
-                  Loadouts
-                </h2>
+              <v-col cols="6" md="5">
+                <v-row align="center" class="mt-3 mb-4">
+                  <h2>Loadouts</h2>
+                  <v-spacer></v-spacer>
+                  <v-btn text color="primary" @click="addNewLoadout()">
+                    <v-icon left>mdi-plus-thick</v-icon> Loadout
+                  </v-btn>
+                </v-row>
                 <v-list>
                   <template
-                    v-for="(loadout, loadoutIndex) in loadouts"
+                    v-for="(loadout, loadoutIndex) in sortedLoadouts"
                   >
                     <v-list-item
                       :key="'loadout-' + loadoutIndex"
                       title="Edit this Loadout"
+                      :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
                       @click="editLoadout(loadout)"
                     >
+                    <div class="d-flex">
+                      <v-btn
+                        icon
+                        color="primary"
+                        class="mr-3"
+                        title="Equip this Loadout"
+                        @click.stop="equipLoadout(editing.loadout)"
+                      >
+                        <v-icon>mdi-play</v-icon>
+                      </v-btn>
+                    </div>
                       <v-list-item-title>
                         {{ loadout.label }}
                       </v-list-item-title>
-                      <div>
-                        <div class="d-flex">
-                          <v-btn
-                            icon
-                            color="error"
-                            title="Delete this Loadout"
-                            @click.stop="askDeleteLoadout(loadout)"
-                          >
-                            <v-icon>mdi-delete-outline</v-icon>
-                          </v-btn>
-                        </div>
+                      <div class="d-flex">
+                        <v-btn
+                          icon
+                          title="Duplicate this Loadout"
+                          @click.stop="duplicateLoadout(loadout)"
+                        >
+                          <v-icon>mdi-content-copy</v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          color="error"
+                          title="Delete this Loadout"
+                          @click.stop="askDeleteLoadout(loadout)"
+                        >
+                          <v-icon>mdi-delete-outline</v-icon>
+                        </v-btn>
                       </div>
                     </v-list-item>
                     <v-divider
@@ -80,7 +98,7 @@
                 </v-list>
               </v-col>
               <!-- Right column -->
-              <v-col style="margin-top: 28px">
+              <v-col v-if="editing.loadout" class="mt-3">
                 <div class="caption mt-2">Name of Loadout</div>
                 <v-row class="mb-5">
                   <v-col>
@@ -127,7 +145,7 @@
                 <!-- Tools -->
                 <div class="caption mt-2">Tools</div>
                 <v-row dense>
-                  <v-col>
+                  <v-col cols="12" md="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[3]"
@@ -138,7 +156,7 @@
                       class="pt-0"
                     />
                   </v-col>
-                  <v-col>
+                  <v-col cols="12" md="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[4]"
@@ -149,7 +167,7 @@
                       class="pt-0"
                     />
                   </v-col>
-                  <v-col>
+                  <v-col cols="12" md="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[5]"
@@ -160,7 +178,7 @@
                       class="pt-0"
                     />
                   </v-col>
-                  <v-col>
+                  <v-col cols="12" md="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[6]"
@@ -175,7 +193,7 @@
                 <!-- Consumables -->
                 <div class="caption mt-2">Consumables</div>
                 <v-row dense>
-                  <v-col>
+                  <v-col cols="12" md="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[7]"
@@ -186,7 +204,7 @@
                       class="pt-0"
                     />
                   </v-col>
-                  <v-col>
+                  <v-col cols="12" md="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[8]"
@@ -197,7 +215,7 @@
                       class="pt-0"
                     />
                   </v-col>
-                  <v-col>
+                  <v-col cols="12" md="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[9]"
@@ -208,7 +226,7 @@
                       class="pt-0"
                     />
                   </v-col>
-                  <v-col>
+                  <v-col cols="12" md="3">
                     <v-text-field
                       v-if="editing.loadout"
                       v-model="editing.loadout[10]"
@@ -220,9 +238,34 @@
                     />
                   </v-col>
                 </v-row>
+                <v-row class="pt-4">
+                  <div class="ml-3 mr-auto">
+                    <v-btn text color="primary" @click="equipLoadout(editing.loadout)">
+                      <v-icon class="mr-2">mdi-play</v-icon> Equip this
+                    </v-btn>
+                  </div>
+                  <div class="mr-3">
+                    <v-btn text color="secondary" @click="cancelEditing()">Cancel</v-btn>
+                    <v-btn
+                      color="primary"
+                      :disabled="!canSaveEditing"
+                      @click="saveEditing()"
+                    >
+                      Save
+                    </v-btn>
+                  </div>
+                </v-row>
               </v-col>
             </v-row>
-
+            <v-snackbar
+              v-model="snackbar.show"
+              top
+              timeout="1000"
+              color="success"
+            >
+              <v-icon class="mr-2">mdi-check</v-icon>
+              {{ snackbar.text }}
+            </v-snackbar>
           </v-container>
         </v-main>
       </v-app>
@@ -235,8 +278,9 @@
         return JSON.parse(JSON.stringify(obj));
       }
 
-      const EMPTY_LOADOUT = {
-        label: "",
+      const NEW_LOADOUT_TEMPLATE = {
+        id: null,
+        label: "A new loadout",
         1: "",
         2: "",
         3: "",
@@ -254,6 +298,10 @@
         vuetify: new Vuetify(),
         data() {
           return {
+            snackbar: {
+              show: false,
+              text: '',
+            },
             editing: {
               loadout: null,
             },
@@ -271,6 +319,7 @@
             },
             loadouts: [
               {
+                id: 1,
                 label: "Vetterli / Officer",
                 1: "Vetterli 71 Karabiner",
                 2: "Nagant M1895 Officer",
@@ -284,6 +333,7 @@
                 10: "Dynamite Stick",
               },
               {
+                id: 2,
                 label: 'Sparks / Frag',
                 1: "The Reckoning",
                 2: "Copperhead",
@@ -297,6 +347,7 @@
                 10: "Frag Bomb",
               },
               {
+                id: 3,
                 label: 'Base without Weapons',
                 1: '',
                 2: '',
@@ -312,12 +363,93 @@
             ],
           };
         },
-        created() {
-          this.startNewLoadout();
+        computed: {
+          canSaveEditing() {
+            const noDuplicateLabel = (
+              this.loadouts
+                .filter(loadout => loadout.id !== this.editing.loadout.id)
+                .filter(
+                  loadout => {
+                    return (
+                      loadout.label.trim().toLowerCase() ===
+                      this.editing.loadout.label.trim().toLowerCase()
+                    )
+                  }
+                )
+                .length == 0
+            );
+            const validLabel = (
+              this.editing.loadout.label.trim() !== '' && noDuplicateLabel
+            );
+            return this.editing.loadout && validLabel;
+          },
+          sortedLoadouts() {
+            function compareByLabel(a, b) {
+              if (a.label > b.label) return 1;
+              if (b.label > a.label) return -1;
+              return 0;
+            }
+            return this.loadouts.sort(compareByLabel);
+          },
         },
         methods: {
-          startNewLoadout() {
-            this.editLoadout(EMPTY_LOADOUT);
+          showSnackbarText(text) {
+            this.snackbar.text = text;
+            this.snackbar.show = true;
+          },
+          getHighestId() {
+            const ids = (
+              this.loadouts
+                .filter(loadout => loadout.id !== null)
+                .map(loadout => loadout.id)
+            );
+            return Math.max(...ids) || 1;
+          },
+          getNewId() {
+            return this.getHighestId() + 1;
+          },
+          saveEditing() {
+            if (!this.editing.loadout) {
+              return;
+            }
+            for (let index = 0; index < this.loadouts.length; index++) {
+              const loadout = this.loadouts[index];
+              if (loadout.id == this.editing.loadout.id) {
+                this.loadouts[index] = deepCopy(this.editing.loadout);
+                this.showSnackbarText('Loadout saved');
+                return;
+              }
+            }
+          },
+          cancelEditing() {
+            this.editing.loadout = null;
+          },
+          labelExistsMoreThan(label, num) {
+            return this.loadouts.filter(
+              loadout => loadout.label.trim().toLowerCase() == label.trim().toLowerCase()
+            ).length > num;
+          },
+          isExistingLabel(label) {
+            return this.labelExistsMoreThan(label, 0);
+          },
+          addNewLoadout() {
+            const newLoadout = deepCopy(NEW_LOADOUT_TEMPLATE);
+            while (this.isExistingLabel(newLoadout.label)) {
+              newLoadout.label += ' (new)';
+            }
+            newLoadout.id = this.getNewId();
+            this.loadouts.push(newLoadout);
+            this.editing.loadout = deepCopy(newLoadout);
+          },
+          duplicateLoadout(loadout) {
+            const duplicatedLoadout = deepCopy(loadout);
+            while (this.isExistingLabel(duplicatedLoadout.label)) {
+              duplicatedLoadout.label += ' (copy)';
+            }
+            duplicatedLoadout.id = this.getNewId();
+
+            this.loadouts.push(duplicatedLoadout);
+            this.editing.loadout = deepCopy(duplicatedLoadout);
           },
           editLoadout(loadout) {
             this.editing.loadout = deepCopy(loadout);
@@ -332,8 +464,15 @@
           },
           deleteLoadout(loadoutToDelete) {
             this.loadouts = this.loadouts.filter(
-              loadout => loadout.label !== loadoutToDelete.label
+              loadout => loadout.id !== loadoutToDelete.id
             );
+            if (this.editing.loadout) {
+              const loadoutIds = this.loadouts.map(loadout => loadout.id);
+              if (loadoutIds.indexOf(this.editing.loadout.id) === -1) {
+                // Edited loadout has been deleted.
+                this.cancelEditing();
+              }
+            }
           },
         },
       });
@@ -351,10 +490,6 @@
       .clickable {
         cursor: pointer;
       }
-
-      /* .hoverable:hover {
-        background: rgba(0, 0, 0, 0.04);
-      } */
     </style>
   </body>
 </html>
