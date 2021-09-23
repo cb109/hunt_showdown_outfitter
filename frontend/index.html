@@ -65,7 +65,7 @@
                             icon
                             color="error"
                             title="Delete this Loadout"
-                            @click="askDeleteLoadout(loadout)"
+                            @click.stop="askDeleteLoadout(loadout)"
                           >
                             <v-icon>mdi-delete-outline</v-icon>
                           </v-btn>
