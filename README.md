@@ -1,4 +1,19 @@
-# hunt_showdown_outfitter
+# Hunt: Showdown Outfitter
+
+A tool to manage item presets for Hunt: Showdown and semi-automatically
+equip them in the game by automating mouse and keyboard against
+preconfigured coordinates.
+
+### Prerequisites
+
+```bash
+$ pip install -r requirements
+```
+
+### Run local instance
+```bash
+$ python main.py
+```
 
 ### Build single file .exe
 
