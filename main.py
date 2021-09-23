@@ -260,7 +260,7 @@ def main(loadout_index):
 
 def open_gui():
     eel.init("frontend")
-    eel.start("index.html", size=(520, 560), port=8066)
+    eel.start("index.html", size=(1024, 720), port=8066)
 
 
 if __name__ == "__main__":
