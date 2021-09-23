@@ -7,7 +7,7 @@ preconfigured coordinates.
 ### Prerequisites
 
 ```bash
-$ pip install -r requirements
+$ pip install -r requirements.txt
 ```
 
 ### Run local instance
