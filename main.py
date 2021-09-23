@@ -1,18 +1,19 @@
-# pip install pillow
-# pip install pyautogui
-# pip install pygetwindow
-
 # Hunt settings: We need to use Borderless for screenshots, but Fullscreen for
 #   the keyboard input to work!
 
 import random
-import sys
 from collections import namedtuple
 
+import sys
 import eel
 import pyautogui
 import pygetwindow
 from PIL import ImageDraw, ImageFont
+
+# We'll use module level state to avoid running more than one Hunt
+# automation command at a time.
+this = sys.modules[__name__]
+this.busy = False
 
 GAME_WINDOW_TITLE = "Hunt: Showdown"
 
@@ -20,6 +21,8 @@ COLOR_RED = (255, 0, 0)
 COLOR_YELLOW = (255, 255, 0)
 
 Point = namedtuple("Point", ["x", "y"])
+
+FRONTEND_LOADOUT_ITEM_SLOT_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
 
 ITEM_SLOTS = (
     # Primary and secondary Weapon
@@ -42,99 +45,6 @@ SEARCH_BOX = Point(x=870, y=230)
 FIRST_ITEM_IN_LIST = Point(x=950, y=310)
 REMOVE_FILTERS_BUTTON = Point(x=1660, y=225)
 
-LOADOUTS = [
-    None,  # Placeholder so we start at 1
-    {
-        1: "Vetterli 71 Karabiner",
-        2: "Nagant M1895 Officer",
-        3: "Knuckle Knife",
-        4: "First Aid Kit",
-        5: "Fusees",
-        6: "Choke Bombs",
-        7: "Vitality Shot",
-        8: "Fire Bomb",
-        9: "Weak Antidote Shot",
-        10: "Dynamite Stick",
-    },
-    {
-        1: "The Reckoning",
-        2: "Copperhead",
-        3: "The Tanto",
-        4: "The Marrow",
-        5: "Dusters",
-        6: "Choke Bombs",
-        7: "Vitality Shot",
-        8: "Fire Bomb",
-        9: "Weak Antidote Shot",
-        10: "Frag Bomb",
-    },
-    {
-        1: None,
-        2: None,
-        3: "Knuckle Knife",
-        4: "First Aid Kit",
-        5: "Fusees",
-        6: "Choke Bombs",
-        7: "Vitality Shot",
-        8: "Fire Bomb",
-        9: "Weak Antidote Shot",
-        10: "Dynamite Stick",
-    },
-]
-
-
-# [primary_weapon]
-# x = 100
-# y = 100
-
-# [secondary_weapon]
-# x = 100
-# y = 100
-
-# [tools_1]
-# x = 100
-# y = 100
-
-# [tools_2]
-# x = 100
-# y = 100
-
-# [tools_3]
-# x = 100
-# y = 100
-
-# [tools_4]
-# x = 100
-# y = 100
-
-# [consumables_1]
-# x = 100
-# y = 100
-
-# [consumables_2]
-# x = 100
-# y = 100
-
-# [consumables_3]
-# x = 100
-# y = 100
-
-# [consumables_4]
-# x = 100
-# y = 100
-
-
-# primary_weapon   = Vetterli 71 Karabiner
-# secondary_weapon = Nagant M1895 Officer
-# tools_1          = Knuckle Knife
-# tools_2          = First Aid Kit
-# tools_3          = Fusees
-# tools_4          = Choke Bombs
-# consumables_1    = Vitality Shot
-# consumables_2    = Fire Bomb
-# consumables_3    = Weak Antidote Shot
-# consumables_4    = Dynamite Stick
-
 
 def set_hunt_showdown_as_foreground_window() -> bool:
     windows = pygetwindow.getWindowsWithTitle(GAME_WINDOW_TITLE)
@@ -144,7 +54,9 @@ def set_hunt_showdown_as_foreground_window() -> bool:
         print(f"Window titled '{GAME_WINDOW_TITLE}' could not be found")
         return False
 
-    game_window.activate()
+    game_window.minimize()
+    game_window.restore()
+
     return True
 
 
@@ -199,8 +111,8 @@ def buy_and_assign_first_item_to_selected_slot():
 
 
 def equip_loadout(loadout: dict) -> None:
-    for slot_index in sorted(loadout.keys()):
-        item_slot = ITEM_SLOTS[slot_index - 1]
+    for slot_index in FRONTEND_LOADOUT_ITEM_SLOT_KEYS:
+        item_slot = ITEM_SLOTS[int(slot_index) - 1]
 
         item_name = loadout[slot_index]
         if not item_name:
@@ -246,16 +158,40 @@ def _debug_item_slots_in_screenshot():
     image.save()
 
 
-def main(loadout_index):
+@eel.expose()
+def put_hunt_in_foreground_and_equip_loadout(loadout: dict):
+    """Equip given loadout in the running Hunt instance.
+
+    Example for the shape of a loadout:
+
+        {
+            "id": 2,
+            "label": 'Sparks / Frag',
+            "1": "The Reckoning",
+            "2": "Copperhead",
+            "3": "The Tanto",
+            "4": "The Marrow",
+            "5": "Dusters",
+            "6": "Choke Bombs",
+            "7": "Vitality Shot",
+            "8": "Fire Bomb",
+            "9": "Weak Antidote Shot",
+            "10": "Frag Bomb",
+        }
+
+    Please note all incoming keys are strings, not numbers.
+
+    """
+    if this.busy:
+        return
     if not set_hunt_showdown_as_foreground_window():
         return
 
-    if not loadout_index:
-        unequip_all()
-    else:
-        equip_loadout(LOADOUTS[loadout_index])
-
-    # _debug_item_slots_in_screenshot()
+    this.busy = True
+    try:
+        equip_loadout(loadout)
+    finally:
+        this.busy = False
 
 
 def open_gui():
@@ -265,11 +201,3 @@ def open_gui():
 
 if __name__ == "__main__":
     open_gui()
-    # args = sys.argv[1:]
-    # try:
-    #     loadout_index = int(args[0])
-    # except (IndexError, TypeError):
-    #     print("Usage: python main.py <loadout-index>")
-    #     sys.exit(1)
-
-    # main(loadout_index)

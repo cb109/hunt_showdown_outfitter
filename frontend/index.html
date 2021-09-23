@@ -56,7 +56,7 @@
                       :key="'loadout-' + loadoutIndex"
                       title="Edit this Loadout"
                       :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
-                      @click="editLoadout(loadout)"
+                      @click="modifyLoadout(loadout)"
                     >
                     <div class="d-flex">
                       <v-btn
@@ -64,7 +64,7 @@
                         color="primary"
                         class="mr-3"
                         title="Equip this Loadout"
-                        @click.stop="equipLoadout(editing.loadout)"
+                        @click.stop="equipLoadout(loadout)"
                       >
                         <v-icon>mdi-play</v-icon>
                       </v-btn>
@@ -334,7 +334,7 @@
               },
               {
                 id: 2,
-                label: 'Sparks / Frag',
+                label: "Sparks / Frag",
                 1: "The Reckoning",
                 2: "Copperhead",
                 3: "The Tanto",
@@ -349,8 +349,8 @@
               {
                 id: 3,
                 label: 'Base without Weapons',
-                1: '',
-                2: '',
+                1: "",
+                2: "",
                 3: "Knuckle Knife",
                 4: "First Aid Kit",
                 5: "Fusees",
@@ -359,6 +359,20 @@
                 8: "Fire Bomb",
                 9: "Weak Antidote Shot",
                 10: "Dynamite Stick",
+              },
+              {
+                id: 4,
+                label: 'Nothing',
+                1: "",
+                2: "",
+                3: "",
+                4: "",
+                5: "",
+                6: "",
+                7: "",
+                8: "",
+                9: "",
+                10: "",
               },
             ],
           };
@@ -393,6 +407,10 @@
           },
         },
         methods: {
+          equipLoadout(loadout) {
+            this.showSnackbarText('Equipping "' + loadout.label + '"...');
+            eel.put_hunt_in_foreground_and_equip_loadout(loadout);
+          },
           showSnackbarText(text) {
             this.snackbar.text = text;
             this.snackbar.show = true;
@@ -451,7 +469,7 @@
             this.loadouts.push(duplicatedLoadout);
             this.editing.loadout = deepCopy(duplicatedLoadout);
           },
-          editLoadout(loadout) {
+          modifyLoadout(loadout) {
             this.editing.loadout = deepCopy(loadout);
           },
           askDeleteLoadout(loadout) {
