@@ -26,6 +26,8 @@ GAME_WINDOW_TITLE = "Hunt: Showdown"
 EXPORT_FILE_WINDOW_TITLE = "Save loadouts to file"
 IMPORT_FILE_WINDOW_TITLE = "Load loadouts from file"
 
+MEMORY_FILENAME = "hunt_showdown_outfitter.json"
+
 COLOR_RED = (255, 0, 0)
 COLOR_YELLOW = (255, 255, 0)
 COLOR_GREEN = (0, 255, 0)
@@ -226,7 +228,7 @@ def put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(ui_coordinates
 
 def get_userdir_memory_filepath():
     home = os.path.expanduser("~")
-    return os.path.join(home, "hunt_showdown_outfitter.json")
+    return os.path.join(home, MEMORY_FILENAME)
 
 
 def save_last_filepath_to_userdir(filepath):

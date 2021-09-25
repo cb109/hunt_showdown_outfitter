@@ -30,6 +30,7 @@ is done.
     ![](docs/debug_screenshot.png)
 - The equip-loadout buttons only work when Hunt: Showdown is running in `Window Mode: Fullscreen` and when you are on the `Roster > Overview` screen.
 - You need to have Chrome or Edge installed on your Windows machine.
+- The last imported/exported file that is openend on launch is remembered in this file: `C:\Users\your-username\hunt_showdown_outfitter.json`
 
 ### Known Issues
 
