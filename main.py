@@ -214,7 +214,7 @@ def load_data_from_last_filepath_in_userdir():
             eel.loadFileData(data)
             eel.feedback(
                 f"Loadouts imported from: {last_filepath}",
-                6000,
+                2000,
                 "info",
                 "mdi-information-outline",
             )
@@ -274,7 +274,7 @@ def choose_file_and_import_from():
 
     eel.loadFileData(data)
     eel.feedback(
-        f"Loadouts imported from: {filepath}", 3000, "info", "mdi-information-outline"
+        f"Loadouts imported from: {filepath}", 2000, "info", "mdi-information-outline"
     )
 
     save_last_filepath_to_userdir(filepath)
