@@ -125,6 +125,10 @@ def equip_loadout(loadout: dict) -> None:
     for slot_index in FRONTEND_LOADOUT_ITEM_SLOT_KEYS:
         item_slot = ITEM_SLOTS[int(slot_index) - 1]
 
+        exclude_item_slot = loadout.get("excludes", {}).get(slot_index, False)
+        if exclude_item_slot:
+            continue
+
         item_name = loadout[slot_index]
         if not item_name:
             unequip_item_slot(item_slot)
@@ -309,7 +313,7 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict):
 
 def open_gui():
     eel.init("frontend")
-    eel.start("index.html", size=(1280, 800), port=8066)
+    eel.start("index.html", size=(1280, 900), port=8066)
 
 
 if __name__ == "__main__":

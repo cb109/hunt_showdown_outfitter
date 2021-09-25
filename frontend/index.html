@@ -46,7 +46,12 @@
             </v-row>
             <v-row class="fill-height">
               <!-- Left column -->
-              <v-col cols="6">
+              <v-col
+                cols="12"
+                sm="6"
+                lg="5"
+                xl="4"
+              >
                 <v-row align="center" class="mt-3 mb-4">
                   <h2>Loadouts</h2>
                   <v-spacer></v-spacer>
@@ -55,26 +60,24 @@
                   </v-btn>
                 </v-row>
                 <v-list>
-                  <template
-                    v-for="(loadout, loadoutIndex) in sortedLoadouts"
-                  >
+                  <template v-for="(loadout, loadoutIndex) in sortedLoadouts">
                     <v-list-item
                       :key="'loadout-' + loadoutIndex"
                       title="Edit this Loadout"
                       :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
                       @click="modifyLoadout(loadout)"
                     >
-                    <div class="d-flex">
-                      <v-btn
-                        icon
-                        color="primary"
-                        class="mr-3"
-                        title="Equip this Loadout"
-                        @click.stop="equipLoadout(loadout)"
-                      >
-                        <v-icon>mdi-play</v-icon>
-                      </v-btn>
-                    </div>
+                      <div class="d-flex">
+                        <v-btn
+                          icon
+                          color="primary"
+                          class="mr-3"
+                          title="Equip this Loadout"
+                          @click.stop="equipLoadout(loadout)"
+                        >
+                          <v-icon>mdi-play</v-icon>
+                        </v-btn>
+                      </div>
                       <v-list-item-title>
                         {{ loadout.label }}
                       </v-list-item-title>
@@ -104,7 +107,13 @@
                 </v-list>
               </v-col>
               <!-- Right column -->
-              <v-col v-if="editing.loadout" class="mt-3">
+              <v-col
+                v-if="editing.loadout"
+                cols="12"
+                sm="6"
+                lg="7"
+                xl="8"
+              >
                 <div class="title mt-3 mb-3">Name of Loadout</div>
                 <v-row class="mb-5">
                   <v-col>
@@ -131,7 +140,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 1)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 1)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[1]}"
                     />
                   </v-col>
                 </v-row>
@@ -144,7 +157,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 2)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 2)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[2]}"
                     />
                   </v-col>
                 </v-row>
@@ -159,7 +176,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 3)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 3)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[3]}"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
@@ -170,7 +191,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 4)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 4)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[4]}"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
@@ -181,7 +206,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 5)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 5)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[5]}"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
@@ -192,7 +221,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 6)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 6)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[6]}"
                     />
                   </v-col>
                 </v-row>
@@ -207,7 +240,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 7)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 7)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[7]}"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
@@ -218,7 +255,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 8)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 8)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[8]}"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
@@ -229,7 +270,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 9)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 9)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[9]}"
                     />
                   </v-col>
                   <v-col cols="12" md="6" lg="3">
@@ -240,7 +285,11 @@
                       hide-details
                       clearable
                       outlined
+                      title="Toggle checkbox to exclude this item when equipping"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 10)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 10)"
                       class="pt-0 mb-2"
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[10]}"
                     />
                   </v-col>
                 </v-row>
@@ -296,9 +345,8 @@
       }
 
       const NEW_LOADOUT_TEMPLATE = {
-        id: null,
-        label: "A new loadout",
         1: "",
+        10: "",
         2: "",
         3: "",
         4: "",
@@ -307,7 +355,11 @@
         7: "",
         8: "",
         9: "",
-        10: ""
+        excludes: {
+          // 1: true,
+        },
+        id: null,
+        label: "A new loadout",
       };
 
       window.app = new Vue({
@@ -341,9 +393,18 @@
         },
         computed: {
           fileData() {
+            const migratedLoadouts = this.loadouts.slice();
+
+            // Add .excludes attribute if needed.
+            for (let i = 0; i < migratedLoadouts.length; i++) {
+              if (migratedLoadouts[i].excludes === undefined) {
+                migratedLoadouts[i].excludes = {};
+              }
+            }
+
             return {
               version: 1,
-              loadouts: this.loadouts,
+              loadouts: migratedLoadouts,
             };
           },
           canSaveEditing() {
@@ -378,6 +439,20 @@
           eel.load_data_from_last_filepath_in_userdir();
         },
         methods: {
+          getLoadoutItemSlotPrependIcon(loadout, itemSlotIndex) {
+            if (loadout.excludes === undefined || !loadout.excludes[itemSlotIndex]) {
+              return 'mdi-checkbox-marked';
+            }
+            return 'mdi-checkbox-blank-outline';
+          },
+          onToggleLoadoutItemSlotIndexClicked(loadout, itemSlotIndex) {
+            if (loadout.excludes === undefined) {
+              this.$set(loadout, 'excludes', {});
+            }
+            this.$set(
+              loadout.excludes, itemSlotIndex, !loadout.excludes[itemSlotIndex]
+            );
+          },
           exportToFile() {
             eel.choose_file_and_export_to(this.fileData);
           },
@@ -501,6 +576,10 @@
 
       .clickable {
         cursor: pointer;
+      }
+
+      .muted {
+        opacity: 0.5;
       }
     </style>
   </body>
