@@ -21,6 +21,8 @@ this = sys.modules[__name__]
 this.busy = False
 
 GAME_WINDOW_TITLE = "Hunt: Showdown"
+EXPORT_FILE_WINDOW_TITLE = "Save loadouts to file"
+IMPORT_FILE_WINDOW_TITLE = "Load loadouts from file"
 
 COLOR_RED = (255, 0, 0)
 COLOR_YELLOW = (255, 255, 0)
@@ -225,6 +227,7 @@ def choose_file_and_export_to(data):
 
     file_handle = filedialog.asksaveasfile(
         parent=root,
+        title=EXPORT_FILE_WINDOW_TITLE,
         defaultextension=".json",
         filetypes=(("JSON", "*.json"),),
     )
@@ -249,6 +252,7 @@ def choose_file_and_import_from():
 
     file_handle = filedialog.askopenfile(
         parent=root,
+        title=IMPORT_FILE_WINDOW_TITLE,
         defaultextension=".json",
         filetypes=(("JSON", "*.json"),),
     )
