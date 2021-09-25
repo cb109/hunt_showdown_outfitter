@@ -245,7 +245,7 @@ def load_data_from_last_filepath_in_userdir():
             data = json.loads(f.read())
             eel.loadFileData(data)
             eel.feedback(
-                f"Loadouts imported from: {last_filepath}",
+                f"Loadouts imported from last file: {last_filepath}",
                 2000,
                 "info",
                 "mdi-information-outline",
