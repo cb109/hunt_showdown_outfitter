@@ -15,6 +15,7 @@ from PIL import ImageDraw, ImageFont
 import uuid
 import os
 import subprocess
+import platform
 
 # We'll use module level state to avoid running more than one Hunt
 # automation command at a time.
@@ -362,8 +363,20 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict, ui_coordinates: dict
 
 
 def open_gui():
+    page = "index.html"
+    size = (1280, 900)
+    port = 8066
+
     eel.init("frontend")
-    eel.start("index.html", size=(1280, 900), port=8066)
+    try:
+        eel.start(page, size=size, port=port)
+    except EnvironmentError:
+        # If default browser (Chrome) isn't found, fallback to Microsoft Edge on Win10 or greater
+        # https://github.com/ChrisKnott/Eel/blob/master/examples/07%20-%20CreateReactApp/eel_CRA.py#L68-L70
+        if sys.platform in ["win32", "win64"] and int(platform.release()) >= 10:
+            eel.start(page, size=size, port=port)
+        else:
+            raise
 
 
 if __name__ == "__main__":
