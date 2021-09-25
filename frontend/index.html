@@ -24,10 +24,11 @@
       <v-app>
         <v-main>
           <v-container class="fill-height">
+            <!-- Header -->
             <v-row
               justify="center"
               align="center"
-              class="mt-4"
+              class="mt-4 pb-2"
             >
               <div>
                 <h1>Hunt: Showdown Outfitter</h1>
@@ -37,6 +38,13 @@
                 </div>
               </div>
               <v-spacer></v-spacer>
+              <v-btn
+                text
+                :class="{'primary': settings.show}"
+                @click="toggleSettings()"
+              >
+                <v-icon left>mdi-cog</v-icon> Settings
+              </v-btn>
               <v-btn text @click="exportToFile()">
                 <v-icon left>mdi-file-export-outline</v-icon> Export
               </v-btn>
@@ -44,7 +52,83 @@
                 <v-icon left>mdi-file-import-outline</v-icon> Import
               </v-btn>
             </v-row>
-            <v-row class="fill-height">
+            <!-- Settings Overlay Page -->
+            <v-row
+              v-if="settings.show"
+              class="fill-height"
+            >
+              <v-col>
+                <h2 class="mt-3">Settings</h2>
+                <p>
+                  In order to automate the inventory we need to know where the item
+                  slots and some buttons are (X and Y coordinates in pixels, depending on your
+                  screen resolution).
+                </p>
+                <h3 class="title mb-3">UI Element Coordinates</h3>
+                <v-row
+                  v-for="block in settings.uiCoordinatesBlocks"
+                  :key="'block-' + idx"
+                >
+                  <v-col
+                    v-for="itemSlotIndex in block.slots"
+                    :key="'block-item-slot-' + idx"
+                    cols="12"
+                    sm="6"
+                    md="3"
+                    lg="auto"
+                  >
+                    <div class="caption mb-2">
+                      {{ itemSlotLabels[itemSlotIndex] }}
+                    </div>
+                    <div class="d-flex">
+                      <v-text-field
+                        v-model="uiCoordinates[itemSlotIndex].x"
+                        label="X"
+                        type="number"
+                        class="coords-input mr-3"
+                        hide-details
+                        outlined
+                        suffix="px"
+                        ></v-text-field>
+                      <v-text-field
+                        v-model="uiCoordinates[itemSlotIndex].y"
+                        label="Y"
+                        type="number"
+                        class="coords-input"
+                        hide-details
+                        outlined
+                        suffix="px"
+                        ></v-text-field>
+                    </div>
+                  </v-col>
+                  <v-spacer></v-spacer>
+                </v-row>
+                <div
+                  class="d-flex"
+                  style="
+                    width: 100%;
+                    position: fixed;
+                    bottom: 24px;
+                    right: 24px;
+                  "
+                >
+                  <div class="ml-auto">
+                    <v-btn text color="secondary" @click="cancelSettings()">Cancel</v-btn>
+                    <v-btn
+                      color="primary"
+                      @click="saveSettings()"
+                    >
+                      Save Settings
+                    </v-btn>
+                  </div>
+                </div>
+              </v-col>
+            </v-row>
+            <!-- Main Page -->
+            <v-row
+              v-else
+              class="fill-height"
+            >
               <!-- Left column -->
               <v-col
                 cols="12"
@@ -124,8 +208,8 @@
                       placeholder="Name of Loadout"
                       hide-details
                       clearable
-                      outlined
                       class="pt-0 mb-2"
+                      @click:clear="editing.loadout.label = ''"
                     />
                   </v-col>
                 </v-row>
@@ -292,26 +376,33 @@
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[10]}"
                     />
                   </v-col>
-                </v-row>
-                <v-row class="pt-4">
-                  <div class="ml-3 mr-auto">
+                  <div class="mt-5">
                     <v-btn text color="primary" @click="equipLoadout(editing.loadout)">
-                      <v-icon class="mr-2">mdi-play</v-icon> Equip this
+                      <v-icon class="mr-2">mdi-play</v-icon> Equip this Loadout
                     </v-btn>
                   </div>
-                  <div class="mr-3">
+                </v-row>
+                <v-row
+                  style="
+                    position: fixed;
+                    bottom: 36px;
+                    right: 36px;
+                  "
+                >
+                  <div>
                     <v-btn text color="secondary" @click="cancelEditing()">Cancel</v-btn>
                     <v-btn
                       color="primary"
                       :disabled="!canSaveEditing"
                       @click="saveEditing()"
                     >
-                      Save
+                      Save Loadout
                     </v-btn>
                   </div>
                 </v-row>
               </v-col>
             </v-row>
+            <!-- Feedback Snackbar -->
             <v-snackbar
               v-model="snackbar.show"
               top
@@ -367,28 +458,58 @@
         vuetify: new Vuetify(),
         data() {
           return {
+            settings: {
+              show: false,
+              uiCoordinatesBlocks: [
+                {'slots': [1]},
+                {'slots': [2]},
+                {'slots': [3, 4, 5, 6]},
+                {'slots': [7, 8, 9, 10]},
+                {'slots': ['search_box', 'remove_filters_button', 'first_item_in_list']},
+              ],
+            },
             snackbar: {
               show: false,
               text: '',
-              timeout: 100,
+              timeout: 1000,
               color: 'success',
             },
             editing: {
               loadout: null,
+              settings: null,
             },
             itemSlotLabels: {
-              1: "Weapon 1",
-              2: "Weapon 2",
-              3: "Tool 1",
-              4: "Tool 2",
-              5: "Tool 3",
-              6: "Tool 4",
-              7: "Consumable 1",
-              8: "Consumable 2",
-              9: "Consumable 3",
-              10: "Consumable 4",
+              '1': 'Weapon 1',
+              '2': 'Weapon 2',
+              '3': 'Tool 1',
+              '4': 'Tool 2',
+              '5': 'Tool 3',
+              '6': 'Tool 4',
+              '7': 'Consumable 1',
+              '8': 'Consumable 2',
+              '9': 'Consumable 3',
+              '10': 'Consumable 4',
+              'search_box': 'Search box',
+              'remove_filters_button': 'Remove filters button',
+              'first_item_in_list': 'First item in list',
             },
             loadouts: [],
+            uiCoordinates: {
+              // These defaults match a screen resolution of 2560 x 1080 px.
+              '1': {'x': 1810, 'y': 305},
+              '2': {'x': 1810, 'y': 455},
+              '3': {'x': 1810, 'y': 600},
+              '4': {'x': 1900, 'y': 600},
+              '5': {'x': 1990, 'y': 600},
+              '6': {'x': 2085, 'y': 600},
+              '7': {'x': 1810, 'y': 750},
+              '8': {'x': 1900, 'y': 750},
+              '9': {'x': 1990, 'y': 750},
+              '10': {'x': 2085, 'y': 750},
+              'search_box': {'x': 870, 'y': 230},
+              'first_item_in_list': {'x': 950, 'y': 310},
+              'remove_filters_button': {'x': 1660, 'y': 225},
+            },
           };
         },
         computed: {
@@ -405,6 +526,7 @@
             return {
               version: 1,
               loadouts: migratedLoadouts,
+              uiCoordinates: this.uiCoordinates,
             };
           },
           canSaveEditing() {
@@ -422,7 +544,9 @@
                 .length == 0
             );
             const validLabel = (
-              this.editing.loadout.label.trim() !== '' && noDuplicateLabel
+              !!this.editing.loadout.label &&
+              this.editing.loadout.label.trim() !== '' &&
+              noDuplicateLabel
             );
             return this.editing.loadout && validLabel;
           },
@@ -439,6 +563,28 @@
           eel.load_data_from_last_filepath_in_userdir();
         },
         methods: {
+          editSettings() {
+            this.editing.settings = deepCopy(this.settings);
+            this.settings.show = true;
+          },
+          cancelSettings() {
+            this.editing.settings = null;
+            this.settings.show = false;
+          },
+          saveSettings() {
+            this.settings = deepCopy(this.editing.settings);
+            this.editing.settings = deepCopy(this.settings);
+
+            this.settings.show = true
+            this.showSnackbarText('Settings saved');
+          },
+          toggleSettings() {
+            if (this.settings.show) {
+              this.cancelSettings();
+            } else {
+              this.editSettings();
+            }
+          },
           getLoadoutItemSlotPrependIcon(loadout, itemSlotIndex) {
             if (loadout.excludes === undefined || !loadout.excludes[itemSlotIndex]) {
               return 'mdi-checkbox-marked';
@@ -461,10 +607,13 @@
           },
           loadFileData(data) {
             this.loadouts = data.loadouts;
+            if (data.uiCoordinates) {
+              this.uiCoordinates = data.uiCoordinates;
+            }
           },
           equipLoadout(loadout) {
             this.showSnackbarText('Equipping "' + loadout.label + '"...');
-            eel.put_hunt_in_foreground_and_equip_loadout(loadout);
+            eel.put_hunt_in_foreground_and_equip_loadout(loadout, this.uiCoordinates);
           },
           showSnackbarText(
             text, timeout = 1000, color = 'success', icon = 'mdi-check'
@@ -580,6 +729,10 @@
 
       .muted {
         opacity: 0.5;
+      }
+
+      .coords-input {
+        max-width: 140px;
       }
     </style>
   </body>

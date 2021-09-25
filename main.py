@@ -27,30 +27,7 @@ IMPORT_FILE_WINDOW_TITLE = "Load loadouts from file"
 COLOR_RED = (255, 0, 0)
 COLOR_YELLOW = (255, 255, 0)
 
-Point = namedtuple("Point", ["x", "y"])
-
 FRONTEND_LOADOUT_ITEM_SLOT_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-
-ITEM_SLOTS = (
-    # Primary and secondary Weapon
-    Point(x=1810, y=305),
-    Point(x=1810, y=455),
-    # Tools
-    Point(x=1810, y=600),
-    Point(x=1900, y=600),
-    Point(x=1990, y=600),
-    Point(x=2085, y=600),
-    # Consumables
-    Point(x=1810, y=750),
-    Point(x=1900, y=750),
-    Point(x=1990, y=750),
-    Point(x=2085, y=750),
-)
-
-# UI
-SEARCH_BOX = Point(x=870, y=230)
-FIRST_ITEM_IN_LIST = Point(x=950, y=310)
-REMOVE_FILTERS_BUTTON = Point(x=1660, y=225)
 
 
 def set_hunt_showdown_as_foreground_window() -> bool:
@@ -91,23 +68,23 @@ def smooth_move(x, y, random_offset_up_to=10):
     pyautogui.moveTo(x + offset_x, y + offset_y, get_move_time(), pyautogui.easeOutQuad)
 
 
-def reset_filters():
-    smooth_move(REMOVE_FILTERS_BUTTON.x, REMOVE_FILTERS_BUTTON.y)
+def reset_filters(x, y):
+    smooth_move(x, y)
     pyautogui.click()
 
 
-def focus_search_box():
-    smooth_move(SEARCH_BOX.x, SEARCH_BOX.y)
+def focus_search_box(x, y):
+    smooth_move(x, y)
     pyautogui.click()
 
 
-def select_item_slot(item_slot):
-    smooth_move(item_slot.x, item_slot.y)
+def select_item_slot(x, y):
+    smooth_move(x, y)
     pyautogui.click()
 
 
-def unequip_item_slot(item_slot):
-    smooth_move(item_slot.x, item_slot.y)
+def unequip_item_slot(x, y):
+    smooth_move(x, y)
     pyautogui.doubleClick()
 
 
@@ -116,14 +93,18 @@ def search_for(text):
     pyautogui.press("enter")
 
 
-def buy_and_assign_first_item_to_selected_slot():
-    smooth_move(FIRST_ITEM_IN_LIST.x, FIRST_ITEM_IN_LIST.y)
+def buy_and_assign_first_item_to_selected_slot(x, y):
+    smooth_move(x, y)
     pyautogui.doubleClick()
 
 
-def equip_loadout(loadout: dict) -> None:
+def equip_loadout(loadout: dict, ui_coordinates: dict) -> None:
+    ui_first_item_in_list = ui_coordinates["first_item_in_list"]
+    ui_reset_filters_button = ui_coordinates["reset_filters_button"]
+    ui_search_box = ui_coordinates["search_box"]
+
     for slot_index in FRONTEND_LOADOUT_ITEM_SLOT_KEYS:
-        item_slot = ITEM_SLOTS[int(slot_index) - 1]
+        ui_item = ui_coordinates[int(slot_index) - 1]
 
         exclude_item_slot = loadout.get("excludes", {}).get(slot_index, False)
         if exclude_item_slot:
@@ -131,46 +112,43 @@ def equip_loadout(loadout: dict) -> None:
 
         item_name = loadout[slot_index]
         if not item_name:
-            unequip_item_slot(item_slot)
+            unequip_item_slot(ui_item["x"], ui_item["y"])
             continue
 
-        select_item_slot(item_slot)
+        select_item_slot(ui_item["x"], ui_item["y"])
 
-        reset_filters()
-        focus_search_box()
+        reset_filters(ui_reset_filters_button["x"], ui_reset_filters_button["y"])
+        focus_search_box(ui_search_box["x"], ui_search_box["y"])
         search_for(item_name)
 
-        buy_and_assign_first_item_to_selected_slot()
-
-
-def unequip_all():
-    for item_slot in ITEM_SLOTS:
-        unequip_item_slot(item_slot)
-
-
-def _debug_item_slots_in_screenshot():
-    image = pyautogui.screenshot("screenshot.png")
-    font = ImageFont.truetype("arial.ttf", 24)
-    drawing = ImageDraw.Draw(image)
-
-    for i, slot in enumerate(ITEM_SLOTS):
-        drawing.ellipse(
-            (
-                (slot.x - 3, slot.y - 3),
-                (slot.x + 3, slot.y + 3),
-            ),
-            fill=COLOR_RED,
-        )
-        slot_index = i + 1
-        drawing.text(
-            (slot.x + 10, slot.y),
-            text=str(slot_index),
-            fill=COLOR_YELLOW,
-            font=font,
-            stroke_width=1,
+        buy_and_assign_first_item_to_selected_slot(
+            ui_first_item_in_list["x"], ui_first_item_in_list["y"]
         )
 
-    image.save()
+
+# def _debug_item_slots_in_screenshot():
+#     image = pyautogui.screenshot("screenshot.png")
+#     font = ImageFont.truetype("arial.ttf", 24)
+#     drawing = ImageDraw.Draw(image)
+
+#     for i, slot in enumerate(ITEM_SLOTS):
+#         drawing.ellipse(
+#             (
+#                 (slot.x - 3, slot.y - 3),
+#                 (slot.x + 3, slot.y + 3),
+#             ),
+#             fill=COLOR_RED,
+#         )
+#         slot_index = i + 1
+#         drawing.text(
+#             (slot.x + 10, slot.y),
+#             text=str(slot_index),
+#             fill=COLOR_YELLOW,
+#             font=font,
+#             stroke_width=1,
+#         )
+
+#     image.save()
 
 
 def busy_locked(func):
@@ -282,7 +260,7 @@ def choose_file_and_import_from():
 
 @busy_locked
 @eel.expose()
-def put_hunt_in_foreground_and_equip_loadout(loadout: dict):
+def put_hunt_in_foreground_and_equip_loadout(loadout: dict, ui_coordinates: dict):
     """Equip given loadout in the running Hunt instance.
 
     Example for the shape of a loadout:
@@ -302,13 +280,31 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict):
             "10": "Frag Bomb",
         }
 
+    Example for the shape of ui_coordinates:
+
+        {
+            "1": {"x": 1810, "y": 305},
+            "2": {"x": 1810, "y": 455},
+            "3": {"x": 1810, "y": 600},
+            "4": {"x": 1900, "y": 600},
+            "5": {"x": 1990, "y": 600},
+            "6": {"x": 2085, "y": 600},
+            "7": {"x": 1810, "y": 750},
+            "8": {"x": 1900, "y": 750},
+            "9": {"x": 1990, "y": 750},
+            "10": {"x": 2085, "y": 750},
+            "search_box": {"x": 870, "y": 230},
+            "first_item_in_list": {"x": 950, "y": 310},
+            "remove_filters_button": {"x": 1660, "y": 225},
+        }
+
     Please note all incoming keys are strings, not numbers.
 
     """
     if not set_hunt_showdown_as_foreground_window():
         return
 
-    equip_loadout(loadout)
+    equip_loadout(loadout, ui_coordinates)
 
 
 def open_gui():
