@@ -14,6 +14,7 @@ from tkinter import filedialog
 from PIL import ImageDraw, ImageFont
 
 import os
+import subprocess
 
 # We'll use module level state to avoid running more than one Hunt
 # automation command at a time.
@@ -26,8 +27,30 @@ IMPORT_FILE_WINDOW_TITLE = "Load loadouts from file"
 
 COLOR_RED = (255, 0, 0)
 COLOR_YELLOW = (255, 255, 0)
+COLOR_GREEN = (0, 255, 0)
 
 FRONTEND_LOADOUT_ITEM_SLOT_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+ALL_UI_COORDINATE_KEYS = [
+    *FRONTEND_LOADOUT_ITEM_SLOT_KEYS,
+    "search_box",
+    "remove_filters_button",
+    "first_item_in_list",
+]
+
+SCREENSHOT_FILENAME = "ui_coordinates_debug_screenshot.png"
+
+
+def busy_locked(func):
+    def inner(*args, **kwargs):
+        if this.busy:
+            return
+        this.busy = True
+        try:
+            return func(*args, **kwargs)
+        finally:
+            this.busy = False
+
+    return inner
 
 
 def set_hunt_showdown_as_foreground_window() -> bool:
@@ -61,11 +84,20 @@ def get_type_interval(
 
 
 def smooth_move(x, y, random_offset_up_to=10):
+    x = int(x)
+    y = int(y)
+
     offset_x, offset_y = 0, 0
     if random_offset_up_to:
         offset_x = random.randint(-random_offset_up_to, random_offset_up_to)
         offset_y = random.randint(-random_offset_up_to, random_offset_up_to)
-    pyautogui.moveTo(x + offset_x, y + offset_y, get_move_time(), pyautogui.easeOutQuad)
+
+    pyautogui.moveTo(
+        x + offset_x,
+        y + offset_y,
+        get_move_time(),
+        pyautogui.easeOutQuad,
+    )
 
 
 def reset_filters(x, y):
@@ -100,7 +132,7 @@ def buy_and_assign_first_item_to_selected_slot(x, y):
 
 def equip_loadout(loadout: dict, ui_coordinates: dict) -> None:
     ui_first_item_in_list = ui_coordinates["first_item_in_list"]
-    ui_reset_filters_button = ui_coordinates["reset_filters_button"]
+    ui_remove_filters_button = ui_coordinates["remove_filters_button"]
     ui_search_box = ui_coordinates["search_box"]
 
     for slot_index in FRONTEND_LOADOUT_ITEM_SLOT_KEYS:
@@ -117,7 +149,7 @@ def equip_loadout(loadout: dict, ui_coordinates: dict) -> None:
 
         select_item_slot(ui_item["x"], ui_item["y"])
 
-        reset_filters(ui_reset_filters_button["x"], ui_reset_filters_button["y"])
+        reset_filters(ui_remove_filters_button["x"], ui_remove_filters_button["y"])
         focus_search_box(ui_search_box["x"], ui_search_box["y"])
         search_for(item_name)
 
@@ -126,42 +158,37 @@ def equip_loadout(loadout: dict, ui_coordinates: dict) -> None:
         )
 
 
-# def _debug_item_slots_in_screenshot():
-#     image = pyautogui.screenshot("screenshot.png")
-#     font = ImageFont.truetype("arial.ttf", 24)
-#     drawing = ImageDraw.Draw(image)
+@busy_locked
+@eel.expose()
+def debug_ui_coordinates_in_screenshot(ui_coordinates: dict):
+    """Create screenshot with coordinates overlayed and display it."""
 
-#     for i, slot in enumerate(ITEM_SLOTS):
-#         drawing.ellipse(
-#             (
-#                 (slot.x - 3, slot.y - 3),
-#                 (slot.x + 3, slot.y + 3),
-#             ),
-#             fill=COLOR_RED,
-#         )
-#         slot_index = i + 1
-#         drawing.text(
-#             (slot.x + 10, slot.y),
-#             text=str(slot_index),
-#             fill=COLOR_YELLOW,
-#             font=font,
-#             stroke_width=1,
-#         )
+    image = pyautogui.screenshot(SCREENSHOT_FILENAME)
+    font = ImageFont.truetype("arial.ttf", 24)
+    drawing = ImageDraw.Draw(image)
 
-#     image.save()
+    for key in ALL_UI_COORDINATE_KEYS:
+        coords = ui_coordinates[key]
+        x = int(coords["x"])
+        y = int(coords["y"])
 
+        drawing.ellipse(
+            (
+                (x - 3, y - 3),
+                (x + 3, y + 3),
+            ),
+            fill=COLOR_GREEN,
+        )
+        drawing.text(
+            (x + 10, y),
+            text=str(key),
+            fill=COLOR_GREEN,
+            font=font,
+        )
 
-def busy_locked(func):
-    def inner(*args, **kwargs):
-        if this.busy:
-            return
-        this.busy = True
-        try:
-            return func(*args, **kwargs)
-        finally:
-            this.busy = False
+    image.save(SCREENSHOT_FILENAME)
 
-    return inner
+    subprocess.run(["explorer", SCREENSHOT_FILENAME], shell=True)
 
 
 def get_userdir_memory_filepath():

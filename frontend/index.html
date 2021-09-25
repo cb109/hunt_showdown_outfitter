@@ -40,7 +40,7 @@
               <v-spacer></v-spacer>
               <v-btn
                 text
-                :class="{'primary': settings.show}"
+                :class="{'primary': editing.settings !== null}"
                 @click="toggleSettings()"
               >
                 <v-icon left>mdi-cog</v-icon> Settings
@@ -54,7 +54,7 @@
             </v-row>
             <!-- Settings Overlay Page -->
             <v-row
-              v-if="settings.show"
+              v-if="editing.settings"
               class="fill-height"
             >
               <v-col>
@@ -66,7 +66,7 @@
                 </p>
                 <h3 class="title mb-3">UI Element Coordinates</h3>
                 <v-row
-                  v-for="block in settings.uiCoordinatesBlocks"
+                  v-for="block in editing.settings.uiCoordinatesBlocks"
                   :key="'block-' + idx"
                 >
                   <v-col
@@ -82,7 +82,7 @@
                     </div>
                     <div class="d-flex">
                       <v-text-field
-                        v-model="uiCoordinates[itemSlotIndex].x"
+                        v-model="editing.settings.uiCoordinates[itemSlotIndex].x"
                         label="X"
                         type="number"
                         class="coords-input mr-3"
@@ -91,7 +91,7 @@
                         suffix="px"
                         ></v-text-field>
                       <v-text-field
-                        v-model="uiCoordinates[itemSlotIndex].y"
+                        v-model="editing.settings.uiCoordinates[itemSlotIndex].y"
                         label="Y"
                         type="number"
                         class="coords-input"
@@ -104,7 +104,7 @@
                   <v-spacer></v-spacer>
                 </v-row>
                 <div
-                  class="d-flex"
+                  class="d-flex white"
                   style="
                     width: 100%;
                     position: fixed;
@@ -112,6 +112,19 @@
                     right: 24px;
                   "
                 >
+                  <v-row align="center">
+                    <v-btn
+                      style="margin-left: 64px"
+                      color="secondary"
+                      @click="debugUiCoordinatesWithScreenshot(editing.settings.uiCoordinates)"
+                    >
+                      <v-icon left>mdi-image-outline</v-icon>
+                      Debug with a Screenshot
+                    </v-btn>
+                    <div class="ml-3 caption grey--text text--darken-3">
+                      Please use "Borderless" and open inventory screen first
+                    </div>
+                  </v-row>
                   <div class="ml-auto">
                     <v-btn text color="secondary" @click="cancelSettings()">Cancel</v-btn>
                     <v-btn
@@ -459,7 +472,6 @@
         data() {
           return {
             settings: {
-              show: false,
               uiCoordinatesBlocks: [
                 {'slots': [1]},
                 {'slots': [2]},
@@ -467,6 +479,22 @@
                 {'slots': [7, 8, 9, 10]},
                 {'slots': ['search_box', 'remove_filters_button', 'first_item_in_list']},
               ],
+              uiCoordinates: {
+                // These defaults match a screen resolution of 2560 x 1080 px.
+                '1': {'x': '1810', 'y': '305'},
+                '2': {'x': '1810', 'y': '455'},
+                '3': {'x': '1810', 'y': '600'},
+                '4': {'x': '1900', 'y': '600'},
+                '5': {'x': '1990', 'y': '600'},
+                '6': {'x': '2085', 'y': '600'},
+                '7': {'x': '1810', 'y': '750'},
+                '8': {'x': '1900', 'y': '750'},
+                '9': {'x': '1990', 'y': '750'},
+                '10': {'x': '2085', 'y': '750'},
+                'search_box': {'x': '870', 'y': '230'},
+                'first_item_in_list': {'x': '950', 'y': '310'},
+                'remove_filters_button': {'x': '1660', 'y': '225'},
+              },
             },
             snackbar: {
               show: false,
@@ -494,22 +522,6 @@
               'first_item_in_list': 'First item in list',
             },
             loadouts: [],
-            uiCoordinates: {
-              // These defaults match a screen resolution of 2560 x 1080 px.
-              '1': {'x': 1810, 'y': 305},
-              '2': {'x': 1810, 'y': 455},
-              '3': {'x': 1810, 'y': 600},
-              '4': {'x': 1900, 'y': 600},
-              '5': {'x': 1990, 'y': 600},
-              '6': {'x': 2085, 'y': 600},
-              '7': {'x': 1810, 'y': 750},
-              '8': {'x': 1900, 'y': 750},
-              '9': {'x': 1990, 'y': 750},
-              '10': {'x': 2085, 'y': 750},
-              'search_box': {'x': 870, 'y': 230},
-              'first_item_in_list': {'x': 950, 'y': 310},
-              'remove_filters_button': {'x': 1660, 'y': 225},
-            },
           };
         },
         computed: {
@@ -526,7 +538,7 @@
             return {
               version: 1,
               loadouts: migratedLoadouts,
-              uiCoordinates: this.uiCoordinates,
+              settings: this.settings,
             };
           },
           canSaveEditing() {
@@ -563,23 +575,22 @@
           eel.load_data_from_last_filepath_in_userdir();
         },
         methods: {
+          debugUiCoordinatesWithScreenshot(uiCoordinates) {
+            eel.debug_ui_coordinates_in_screenshot(uiCoordinates);
+          },
           editSettings() {
             this.editing.settings = deepCopy(this.settings);
-            this.settings.show = true;
           },
           cancelSettings() {
             this.editing.settings = null;
-            this.settings.show = false;
           },
           saveSettings() {
             this.settings = deepCopy(this.editing.settings);
             this.editing.settings = deepCopy(this.settings);
-
-            this.settings.show = true
             this.showSnackbarText('Settings saved');
           },
           toggleSettings() {
-            if (this.settings.show) {
+            if (this.editing.settings) {
               this.cancelSettings();
             } else {
               this.editSettings();
@@ -607,13 +618,15 @@
           },
           loadFileData(data) {
             this.loadouts = data.loadouts;
-            if (data.uiCoordinates) {
-              this.uiCoordinates = data.uiCoordinates;
+            if (data.settings) {
+              this.settings = data.settings;
             }
           },
           equipLoadout(loadout) {
             this.showSnackbarText('Equipping "' + loadout.label + '"...');
-            eel.put_hunt_in_foreground_and_equip_loadout(loadout, this.uiCoordinates);
+            eel.put_hunt_in_foreground_and_equip_loadout(
+              loadout, this.settings.uiCoordinates
+            );
           },
           showSnackbarText(
             text, timeout = 1000, color = 'success', icon = 'mdi-check'
