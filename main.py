@@ -2,17 +2,17 @@
 #   the keyboard input to work!
 
 import random
-from collections import namedtuple
 
 import json
 import sys
 import eel
 import pyautogui
 import pygetwindow
+import tempfile
 import tkinter as tk
 from tkinter import filedialog
 from PIL import ImageDraw, ImageFont
-
+import uuid
 import os
 import subprocess
 
@@ -36,8 +36,6 @@ ALL_UI_COORDINATE_KEYS = [
     "remove_filters_button",
     "first_item_in_list",
 ]
-
-SCREENSHOT_FILENAME = "ui_coordinates_debug_screenshot.png"
 
 
 def busy_locked(func):
@@ -67,6 +65,23 @@ def set_hunt_showdown_as_foreground_window() -> bool:
 
     game_window.minimize()
     game_window.restore()
+
+    return True
+
+
+def put_hunt_showdown_window_to_background() -> bool:
+    game_window = None
+    for window in pygetwindow.getWindowsWithTitle(GAME_WINDOW_TITLE):
+        if window.title == GAME_WINDOW_TITLE:
+            game_window = window
+            break
+    if not game_window:
+        message = f"Window titled '{GAME_WINDOW_TITLE}' could not be found"
+        print(message)
+        eel.feedback(message, 3000, "error", "mdi-alert-outline")
+        return False
+
+    game_window.minimize()
 
     return True
 
@@ -160,10 +175,21 @@ def equip_loadout(loadout: dict, ui_coordinates: dict) -> None:
 
 @busy_locked
 @eel.expose()
-def debug_ui_coordinates_in_screenshot(ui_coordinates: dict):
+def put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(ui_coordinates: dict):
     """Create screenshot with coordinates overlayed and display it."""
 
-    image = pyautogui.screenshot(SCREENSHOT_FILENAME)
+    if not set_hunt_showdown_as_foreground_window():
+        return
+
+    tempdir = tempfile.gettempdir()
+    screenshot_filepath = os.path.join(
+        tempdir, f"hunt_showdown_outfitter_screenshot_{uuid.uuid4()}.png"
+    )
+    with open(screenshot_filepath, "w") as f:
+        f.write("")
+    screenshot_filepath = os.path.abspath(screenshot_filepath)
+
+    image = pyautogui.screenshot()
     font = ImageFont.truetype("arial.ttf", 24)
     drawing = ImageDraw.Draw(image)
 
@@ -186,9 +212,10 @@ def debug_ui_coordinates_in_screenshot(ui_coordinates: dict):
             font=font,
         )
 
-    image.save(SCREENSHOT_FILENAME)
+    image.save(screenshot_filepath)
 
-    subprocess.run(["explorer", SCREENSHOT_FILENAME], shell=True)
+    subprocess.run(["explorer", screenshot_filepath], shell=True)
+    put_hunt_showdown_window_to_background()
 
 
 def get_userdir_memory_filepath():

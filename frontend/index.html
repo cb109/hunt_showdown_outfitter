@@ -121,8 +121,8 @@
                       <v-icon left>mdi-image-outline</v-icon>
                       Debug with a Screenshot
                     </v-btn>
-                    <div class="ml-3 caption grey--text text--darken-3">
-                      Please use "Borderless" and open inventory screen first
+                    <div class="ml-3 caption info--text">
+                      Please use "Window Mode: Borderless" and go to Equipment first
                     </div>
                   </v-row>
                   <div class="ml-auto">
@@ -576,7 +576,9 @@
         },
         methods: {
           debugUiCoordinatesWithScreenshot(uiCoordinates) {
-            eel.debug_ui_coordinates_in_screenshot(uiCoordinates);
+            eel.put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(
+              uiCoordinates
+            );
           },
           editSettings() {
             this.editing.settings = deepCopy(this.settings);
