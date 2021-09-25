@@ -67,11 +67,79 @@
                 <p>
                   In order to automate the inventory we need to know
                   where the item slots and some buttons are (X and Y
-                  coordinates in pixels, depending on your screen
-                  resolution).
+                  coordinates in pixels, depending on your <b>screen
+                  resolution</b>).
                 </p>
-                <h3 class="title">UI Element Coordinates</h3>
-                <p>You can tweak each coordinate pair here.</p>
+                <div class="d-flex align-center">
+                  <div>
+                    <h3 class="title">UI Element Coordinates</h3>
+                    <p>You can tweak each coordinate pair here.</p>
+                  </div>
+                  <v-btn
+                    class="ml-auto"
+                    text
+                    color="primary"
+                    @click="estimate.dialog = true"
+                  >
+                    <v-icon left>mdi-ruler</v-icon>
+                    Estimate coordinates
+                  </v-btn>
+                  <!-- Estimate Coordinates Dialog -->
+                  <v-dialog
+                    v-model="estimate.dialog"
+                    width="400"
+                    persistent
+                  >
+                    <v-card>
+                      <v-card-title>Estimate UI Element Coordinates</v-card-title>
+                      <v-card-text>
+                        <p>
+                          Based on internal samples we try to guess
+                          the coordinates for your specific
+                          resolution.
+                        </p>
+                        <div class="d-flex align-center">
+                          <v-text-field
+                            v-model="estimate.width"
+                            type="number"
+                            class="number-input mr-4"
+                            label="Screen Width"
+                            suffix="px"
+                            hide-details
+                            ></v-text-field>
+                          <v-text-field
+                            v-model="estimate.height"
+                            type="number"
+                            class="number-input"
+                            label="Screen Height"
+                            suffix="px"
+                            hide-details
+                          ></v-text-field>
+                        </div>
+                      </v-card-text>
+                      <v-card-actions class="flex-column">
+                        <div class="caption warning--text mb-3">
+                          The estimated coordinates will overwrite your current values.
+                        </div>
+                        <div class="d-flex" style="width: 100%">
+                          <v-btn
+                            text
+                            class="ml-auto mr-2"
+                            @click="estimate.dialog = false"
+                          >
+                            Close
+                          </v-btn>
+                          <v-btn
+                            color="primary"
+                            @click="onEstimationDialogConfirmed()"
+                          >
+                            Estimate
+                          </v-btn>
+                        </div>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </div>
                 <v-row
                   v-for="(block, blockIndex) in editing.settings.uiCoordinatesBlocks"
                   :key="'block-' + blockIndex"
@@ -92,7 +160,7 @@
                         v-model="editing.settings.uiCoordinates[itemSlotIndex].x"
                         label="X"
                         type="number"
-                        class="coords-input mr-3"
+                        class="number-input mr-3"
                         hide-details
                         outlined
                         suffix="px"
@@ -101,7 +169,7 @@
                         v-model="editing.settings.uiCoordinates[itemSlotIndex].y"
                         label="Y"
                         type="number"
-                        class="coords-input"
+                        class="number-input"
                         hide-details
                         outlined
                         suffix="px"
@@ -454,7 +522,7 @@
         return JSON.parse(JSON.stringify(obj));
       }
 
-      DEFAULT_LOADOUT = {
+      const DEFAULT_LOADOUT = {
         1: 'Romero',
         2: 'Pax',
         3: 'Knuckle Knife',
@@ -492,9 +560,9 @@
 
       const uiCoordinatesEstimator = {
         // This data has been collected manually and is used as a base for estimation.
-        templateScreenWidth: 2560,
-        templateScreenHeight: 1080,
-        templateUiCoordinates: {
+        sampleScreenWidth: 2560,
+        sampleScreenHeight: 1080,
+        sampleUiCoordinates: {
           '1': {'x': '1810', 'y': '305'},
           '2': {'x': '1810', 'y': '455'},
           '3': {'x': '1810', 'y': '600'},
@@ -512,11 +580,11 @@
         estimate: function(width, height) {
           const estimatedUiCoordinates = {};
 
-          for (const key of Object.keys(this.templateUiCoordinates)) {
-            const templateX = this.templateUiCoordinates[key].x;
-            const templateY = this.templateUiCoordinates[key].y;
-            const x = Math.round(width / (this.templateScreenWidth / templateX));
-            const y = Math.round(height / (this.templateScreenHeight / templateY));
+          for (const key of Object.keys(this.sampleUiCoordinates)) {
+            const sampleX = this.sampleUiCoordinates[key].x;
+            const sampleY = this.sampleUiCoordinates[key].y;
+            const x = Math.round(width / (this.sampleScreenWidth / sampleX));
+            const y = Math.round(height / (this.sampleScreenHeight / sampleY));
             estimatedUiCoordinates[key] = {"x": String(x), "y": String(y)};
           }
 
@@ -529,6 +597,11 @@
         vuetify: new Vuetify(),
         data() {
           return {
+            estimate: {
+              dialog: false,
+              width: 1920,
+              height: 1080,
+            },
             settings: {
               uiCoordinatesBlocks: [
                 {'slots': [1]},
@@ -537,7 +610,7 @@
                 {'slots': [7, 8, 9, 10]},
                 {'slots': ['search_box', 'remove_filters_button', 'first_item_in_list']},
               ],
-              uiCoordinates: deepCopy(uiCoordinatesEstimator.templateUiCoordinates),
+              uiCoordinates: deepCopy(uiCoordinatesEstimator.sampleUiCoordinates),
             },
             snackbar: {
               show: false,
@@ -624,6 +697,19 @@
           eel.load_data_from_last_filepath_in_userdir();
         },
         methods: {
+          onEstimationDialogConfirmed() {
+            if (!this.editing.settings) {
+              return;
+            }
+            this.estimate.dialog = false;
+            this.setEditingUiCoordinatesForResolution(
+              this.estimate.width, this.estimate.height
+            );
+          },
+          setEditingUiCoordinatesForResolution(width, height) {
+            const estimatedUiCoordinates = uiCoordinatesEstimator.estimate(width, height);
+            this.editing.settings.uiCoordinates = deepCopy(estimatedUiCoordinates);
+          },
           debugUiCoordinatesWithScreenshot(uiCoordinates) {
             eel.put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(
               uiCoordinates
@@ -806,7 +892,7 @@
         opacity: 0.5;
       }
 
-      .coords-input {
+      .number-input {
         max-width: 140px;
       }
     </style>
