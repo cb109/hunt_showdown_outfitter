@@ -242,7 +242,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 1)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 1)"
                       class="pt-0 mb-2"
@@ -259,7 +259,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 2)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 2)"
                       class="pt-0 mb-2"
@@ -278,7 +278,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 3)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 3)"
                       class="pt-0 mb-2"
@@ -293,7 +293,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 4)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 4)"
                       class="pt-0 mb-2"
@@ -308,7 +308,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 5)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 5)"
                       class="pt-0 mb-2"
@@ -323,7 +323,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 6)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 6)"
                       class="pt-0 mb-2"
@@ -342,7 +342,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 7)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 7)"
                       class="pt-0 mb-2"
@@ -357,7 +357,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 8)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 8)"
                       class="pt-0 mb-2"
@@ -372,7 +372,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 9)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 9)"
                       class="pt-0 mb-2"
@@ -387,7 +387,7 @@
                       hide-details
                       clearable
                       outlined
-                      title="Toggle checkbox to exclude this item when equipping"
+                      :title="tooltipItemSlot"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 10)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 10)"
                       class="pt-0 mb-2"
@@ -450,6 +450,24 @@
     <script>
       function deepCopy(obj) {
         return JSON.parse(JSON.stringify(obj));
+      }
+
+      DEFAULT_LOADOUT = {
+        1: 'Romero',
+        2: 'Pax',
+        3: 'Knuckle Knife',
+        4: 'First Aid Kit',
+        5: 'Fusees',
+        6: 'Choke Bombs',
+        7: 'Vitality Shot',
+        8: 'Fire Bomb',
+        9: 'Weak Antidote Shot',
+        10: 'Flash Bomb',
+        excludes: {
+          // 1: true,
+        },
+        id: null,
+        label: "Romero + Pax",
       }
 
       const NEW_LOADOUT_TEMPLATE = {
@@ -525,7 +543,13 @@
               'remove_filters_button': 'Remove filters button',
               'first_item_in_list': 'First item in list',
             },
-            loadouts: [],
+            loadouts: [
+              DEFAULT_LOADOUT,
+            ],
+            tooltipItemSlot: (
+              'Toggle checkbox to exclude this item when equipping. ' +
+              'Shift-Click to equip just this item slot.'
+            )
           };
         },
         computed: {
