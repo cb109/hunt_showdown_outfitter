@@ -152,15 +152,16 @@ def equip_loadout(loadout: dict, ui_coordinates: dict) -> None:
     ui_search_box = ui_coordinates["search_box"]
 
     for slot_index in FRONTEND_LOADOUT_ITEM_SLOT_KEYS:
-        ui_item = ui_coordinates[int(slot_index) - 1]
+        ui_item = ui_coordinates[slot_index]
 
         exclude_item_slot = loadout.get("excludes", {}).get(slot_index, False)
         if exclude_item_slot:
             continue
 
+        unequip_item_slot(ui_item["x"], ui_item["y"])
+
         item_name = loadout[slot_index]
         if not item_name:
-            unequip_item_slot(ui_item["x"], ui_item["y"])
             continue
 
         select_item_slot(ui_item["x"], ui_item["y"])
