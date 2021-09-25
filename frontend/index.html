@@ -39,7 +39,7 @@
                 <div class="info--text caption">
                   Please use <b>Window Mode: Fullscreen</b> for best
                   results and equip from the <b>Roster > Overview</b>
-                  screen only
+                  screen only.
                 </div>
               </div>
               <v-spacer></v-spacer>
@@ -244,7 +244,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 1)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 1)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 1)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[1]}"
                     />
@@ -261,7 +261,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 2)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 2)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 2)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[2]}"
                     />
@@ -280,7 +280,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 3)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 3)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 3)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[3]}"
                     />
@@ -295,7 +295,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 4)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 4)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 4)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[4]}"
                     />
@@ -310,7 +310,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 5)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 5)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 5)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[5]}"
                     />
@@ -325,7 +325,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 6)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 6)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 6)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[6]}"
                     />
@@ -344,7 +344,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 7)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 7)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 7)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[7]}"
                     />
@@ -359,7 +359,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 8)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 8)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 8)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[8]}"
                     />
@@ -374,7 +374,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 9)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 9)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 9)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[9]}"
                     />
@@ -389,7 +389,7 @@
                       outlined
                       title="Toggle checkbox to exclude this item when equipping"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 10)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked(editing.loadout, 10)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 10)"
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[10]}"
                     />
@@ -608,7 +608,13 @@
             }
             return 'mdi-checkbox-blank-outline';
           },
-          onToggleLoadoutItemSlotIndexClicked(loadout, itemSlotIndex) {
+          onToggleLoadoutItemSlotIndexClicked(event, loadout, itemSlotIndex) {
+            // Holding shift key while pressing will equip the item slot.
+            if (event.shiftKey) {
+              this.equipLoadoutItemSlot(loadout, itemSlotIndex);
+              return;
+            }
+
             if (loadout.excludes === undefined) {
               this.$set(loadout, 'excludes', {});
             }
@@ -632,6 +638,11 @@
             this.showSnackbarText('Equipping "' + loadout.label + '"...');
             eel.put_hunt_in_foreground_and_equip_loadout(
               loadout, this.settings.uiCoordinates
+            );
+          },
+          equipLoadoutItemSlot(loadout, itemSlotIndex) {
+            eel.put_hunt_in_foreground_and_equip_loadout_item_slot(
+              loadout, itemSlotIndex, this.settings.uiCoordinates
             );
           },
           showSnackbarText(

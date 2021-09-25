@@ -147,32 +147,36 @@ def buy_and_assign_first_item_to_selected_slot(x, y):
 
 
 def equip_loadout(loadout: dict, ui_coordinates: dict) -> None:
+    for item_slot_index in FRONTEND_LOADOUT_ITEM_SLOT_KEYS:
+        equip_loadout_item_slot(loadout, item_slot_index, ui_coordinates)
+
+
+def equip_loadout_item_slot(
+    loadout: dict, item_slot_index: str, ui_coordinates: dict
+) -> None:
     ui_first_item_in_list = ui_coordinates["first_item_in_list"]
     ui_remove_filters_button = ui_coordinates["remove_filters_button"]
     ui_search_box = ui_coordinates["search_box"]
+    ui_item = ui_coordinates[item_slot_index]
 
-    for slot_index in FRONTEND_LOADOUT_ITEM_SLOT_KEYS:
-        ui_item = ui_coordinates[slot_index]
+    exclude_item_slot = loadout.get("excludes", {}).get(item_slot_index, False)
+    if exclude_item_slot:
+        return
 
-        exclude_item_slot = loadout.get("excludes", {}).get(slot_index, False)
-        if exclude_item_slot:
-            continue
+    select_item_slot(ui_item["x"], ui_item["y"])
+    unequip_item_slot(ui_item["x"], ui_item["y"])
 
-        unequip_item_slot(ui_item["x"], ui_item["y"])
+    item_name = loadout[item_slot_index]
+    if not item_name:
+        return
 
-        item_name = loadout[slot_index]
-        if not item_name:
-            continue
+    reset_filters(ui_remove_filters_button["x"], ui_remove_filters_button["y"])
+    focus_search_box(ui_search_box["x"], ui_search_box["y"])
+    search_for(item_name)
 
-        select_item_slot(ui_item["x"], ui_item["y"])
-
-        reset_filters(ui_remove_filters_button["x"], ui_remove_filters_button["y"])
-        focus_search_box(ui_search_box["x"], ui_search_box["y"])
-        search_for(item_name)
-
-        buy_and_assign_first_item_to_selected_slot(
-            ui_first_item_in_list["x"], ui_first_item_in_list["y"]
-        )
+    buy_and_assign_first_item_to_selected_slot(
+        ui_first_item_in_list["x"], ui_first_item_in_list["y"]
+    )
 
 
 @busy_locked
@@ -361,6 +365,17 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict, ui_coordinates: dict
         return
 
     equip_loadout(loadout, ui_coordinates)
+
+
+@busy_locked
+@eel.expose()
+def put_hunt_in_foreground_and_equip_loadout_item_slot(
+    loadout: dict, item_slot_index: int, ui_coordinates: dict
+):
+    if not set_hunt_showdown_as_foreground_window():
+        return
+
+    equip_loadout_item_slot(loadout, str(item_slot_index), ui_coordinates)
 
 
 def open_gui():
