@@ -186,8 +186,8 @@ def equip_loadout_item_slot(
 def put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(ui_coordinates: dict):
     """Create screenshot with coordinates overlayed and display it."""
 
-    if not set_hunt_showdown_as_foreground_window():
-        return
+    # Allow screenshot even if Hunt is not running.
+    set_hunt_showdown_as_foreground_window()
 
     tempdir = tempfile.gettempdir()
     screenshot_filepath = os.path.join(

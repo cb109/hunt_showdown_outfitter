@@ -65,22 +65,24 @@
               <v-col>
                 <h2 class="mt-3">Settings</h2>
                 <p>
-                  In order to automate the inventory we need to know where the item
-                  slots and some buttons are (X and Y coordinates in pixels, depending on your
-                  screen resolution).
+                  In order to automate the inventory we need to know
+                  where the item slots and some buttons are (X and Y
+                  coordinates in pixels, depending on your screen
+                  resolution).
                 </p>
-                <h3 class="title mb-3">UI Element Coordinates</h3>
+                <h3 class="title">UI Element Coordinates</h3>
+                <p>You can tweak each coordinate pair here.</p>
                 <v-row
-                  v-for="block in editing.settings.uiCoordinatesBlocks"
-                  :key="'block-' + idx"
+                  v-for="(block, blockIndex) in editing.settings.uiCoordinatesBlocks"
+                  :key="'block-' + blockIndex"
                 >
                   <v-col
                     v-for="itemSlotIndex in block.slots"
-                    :key="'block-item-slot-' + idx"
+                    :key="'block-item-slot-' + itemSlotIndex"
                     cols="12"
                     sm="6"
                     md="3"
-                    lg="auto"
+                    xl="auto"
                   >
                     <div class="caption mb-2">
                       {{ itemSlotLabels[itemSlotIndex] }}
@@ -488,6 +490,40 @@
         label: "A new loadout",
       };
 
+      const uiCoordinatesEstimator = {
+        // This data has been collected manually and is used as a base for estimation.
+        templateScreenWidth: 2560,
+        templateScreenHeight: 1080,
+        templateUiCoordinates: {
+          '1': {'x': '1810', 'y': '305'},
+          '2': {'x': '1810', 'y': '455'},
+          '3': {'x': '1810', 'y': '600'},
+          '4': {'x': '1900', 'y': '600'},
+          '5': {'x': '1990', 'y': '600'},
+          '6': {'x': '2085', 'y': '600'},
+          '7': {'x': '1810', 'y': '750'},
+          '8': {'x': '1900', 'y': '750'},
+          '9': {'x': '1990', 'y': '750'},
+          '10': {'x': '2085', 'y': '750'},
+          'search_box': {'x': '870', 'y': '230'},
+          'first_item_in_list': {'x': '950', 'y': '310'},
+          'remove_filters_button': {'x': '1660', 'y': '225'},
+        },
+        estimate: function(width, height) {
+          const estimatedUiCoordinates = {};
+
+          for (const key of Object.keys(this.templateUiCoordinates)) {
+            const templateX = this.templateUiCoordinates[key].x;
+            const templateY = this.templateUiCoordinates[key].y;
+            const x = Math.round(width / (this.templateScreenWidth / templateX));
+            const y = Math.round(height / (this.templateScreenHeight / templateY));
+            estimatedUiCoordinates[key] = {"x": String(x), "y": String(y)};
+          }
+
+          return estimatedUiCoordinates;
+        },
+      };
+
       window.app = new Vue({
         el: "#app",
         vuetify: new Vuetify(),
@@ -501,22 +537,7 @@
                 {'slots': [7, 8, 9, 10]},
                 {'slots': ['search_box', 'remove_filters_button', 'first_item_in_list']},
               ],
-              uiCoordinates: {
-                // These defaults match a screen resolution of 2560 x 1080 px.
-                '1': {'x': '1810', 'y': '305'},
-                '2': {'x': '1810', 'y': '455'},
-                '3': {'x': '1810', 'y': '600'},
-                '4': {'x': '1900', 'y': '600'},
-                '5': {'x': '1990', 'y': '600'},
-                '6': {'x': '2085', 'y': '600'},
-                '7': {'x': '1810', 'y': '750'},
-                '8': {'x': '1900', 'y': '750'},
-                '9': {'x': '1990', 'y': '750'},
-                '10': {'x': '2085', 'y': '750'},
-                'search_box': {'x': '870', 'y': '230'},
-                'first_item_in_list': {'x': '950', 'y': '310'},
-                'remove_filters_button': {'x': '1660', 'y': '225'},
-              },
+              uiCoordinates: deepCopy(uiCoordinatesEstimator.templateUiCoordinates),
             },
             snackbar: {
               show: false,
@@ -539,9 +560,9 @@
               '8': 'Consumable 2',
               '9': 'Consumable 3',
               '10': 'Consumable 4',
-              'search_box': 'Search box',
-              'remove_filters_button': 'Remove filters button',
-              'first_item_in_list': 'First item in list',
+              'search_box': 'Search equipment field',
+              'remove_filters_button': 'Remove equipment filters button',
+              'first_item_in_list': 'First item in equipment list',
             },
             loadouts: [
               DEFAULT_LOADOUT,
