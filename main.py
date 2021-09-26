@@ -138,6 +138,10 @@ def unequip_item_slot(x, y):
     pyautogui.doubleClick()
 
 
+def maybe_get_rid_of_discard_item_dialog(x, y):
+    pyautogui.press("enter")
+
+
 def search_for(text):
     pyautogui.write(text, interval=get_type_interval())
     pyautogui.press("enter")
@@ -167,6 +171,7 @@ def equip_loadout_item_slot(
 
     select_item_slot(ui_item["x"], ui_item["y"])
     unequip_item_slot(ui_item["x"], ui_item["y"])
+    maybe_get_rid_of_discard_item_dialog()
 
     item_name = loadout[item_slot_index]
     if not item_name:
