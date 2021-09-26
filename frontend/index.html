@@ -39,9 +39,17 @@
               <v-spacer></v-spacer>
               <div class="d-flex flex-column align-end">
                 <div
-                  if="currentFilepath"
-                  class="caption grey--text"
+                  v-if="currentFilepath"
+                  class="caption grey--text mb-1"
                 >
+                  <v-btn
+                    icon
+                    x-small
+                    title="Reset current filepath"
+                    @click="currentFilepath = null"
+                  >
+                    <v-icon color="error lighten-4">mdi-close</v-icon>
+                  </v-btn>
                   {{ currentFilepath }}
                 </div>
                 <div class="d-flex flex-wrap">
@@ -49,11 +57,11 @@
                     icon
                     large
                     class="mr-2"
-                    :color="editing.settings ? 'primary' : null"
-                    @click="toggleSettings()"
+                    :class="editing.settings ? 'primary' : null"
                     title="Settings"
+                    @click="toggleSettings()"
                   >
-                    <v-icon>mdi-cog</v-icon>
+                    <v-icon :color="editing.settings ? 'white' : null">mdi-cog</v-icon>
                   </v-btn>
                   <v-btn
                     v-if="currentFilepath"
@@ -127,6 +135,7 @@
                   </div>
                   <v-btn
                     outlined
+                    rounded
                     color="secondary"
                     class="ml-4"
                     @click="estimate.dialog = true"
@@ -174,12 +183,14 @@
                         <div class="d-flex" style="width: 100%">
                           <v-btn
                             text
+                            rounded
                             class="ml-auto mr-2"
                             @click="estimate.dialog = false"
                           >
                             Close
                           </v-btn>
                           <v-btn
+                            rounded
                             color="primary"
                             @click="onEstimationDialogConfirmed()"
                           >
@@ -237,6 +248,7 @@
                 >
                   <div class="d-flex align-center">
                     <v-btn
+                      rounded
                       style="margin-left: 64px"
                       color="secondary"
                       @click="debugUiCoordinatesWithScreenshot(editing.settings.uiCoordinates)"
@@ -252,9 +264,17 @@
                     </div>
                   </div>
                   <div class="ml-auto">
-                    <v-btn text color="secondary" @click="cancelSettings()">Cancel</v-btn>
+                    <v-btn
+                      text
+                      rounded
+                      color="secondary"
+                      @click="cancelSettings()"
+                    >
+                      Cancel
+                    </v-btn>
                     <v-btn
                       color="primary"
+                      rounded
                       @click="saveSettings()"
                     >
                       Save Settings
@@ -350,6 +370,7 @@
                   </div>
                   <v-btn
                     text
+                    rounded
                     class="ma-0"
                     color="primary"
                     @click="equipLoadout(editing.loadout)"
@@ -545,6 +566,7 @@
                   <div class="white">
                     <v-btn
                       text
+                      rounded
                       color="secondary"
                       @click="cancelEditingLoadout()"
                     >
@@ -552,6 +574,7 @@
                     </v-btn>
                     <v-btn
                       color="primary"
+                      rounded
                       :disabled="!canSaveEditing"
                       @click="saveEditing()"
                     >
@@ -574,6 +597,7 @@
                 <v-btn
                   color="white"
                   text
+                  rounded
                   v-bind="attrs"
                   @click="snackbar.show = false"
                 >

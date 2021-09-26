@@ -107,7 +107,7 @@ def load_data_from_last_filepath_in_userdir() -> Optional[str]:
             eel.loadFileData(data)
 
             eel.feedback(
-                f"Loadouts imported from last file: {last_filepath}",
+                f"Opened most recent file: {last_filepath}",
                 2000,
                 "info",
                 "mdi-information-outline",
@@ -150,9 +150,7 @@ def choose_file_and_export_to(data) -> Optional[str]:
     filepath = file_handle.name
     ui_automation.save_last_filepath_to_userdir(filepath)
 
-    eel.feedback(
-        f"File written to: {filepath}", 3000, "info", "mdi-information-outline"
-    )
+    eel.feedback(f"File saved as: {filepath}", 3000, "info", "mdi-information-outline")
     return filepath
 
 
@@ -181,9 +179,7 @@ def choose_file_and_import_from() -> Optional[str]:
     filepath = file_handle.name
 
     eel.loadFileData(data)
-    eel.feedback(
-        f"Loadouts imported from: {filepath}", 2000, "info", "mdi-information-outline"
-    )
+    eel.feedback(f"Opened file: {filepath}", 2000, "info", "mdi-information-outline")
 
     ui_automation.save_last_filepath_to_userdir(filepath)
     return filepath
