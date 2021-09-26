@@ -28,7 +28,7 @@
                 <h1>Hunt: Showdown Outfitter</h1>
                 <div class="warning--text caption">
                   <b>Be warned</b>: This program automates keyboard/mouse
-                  input, which can get you banned by the anti-cheat system.
+                  input, which <b>can get you banned</b> by the anti-cheat system.
                 </div>
                 <div class="info--text caption">
                   Please use <b>Window Mode: Fullscreen</b> for best
@@ -37,27 +37,62 @@
                 </div>
               </div>
               <v-spacer></v-spacer>
-              <v-btn
-                text
-                :class="{'primary': editing.settings !== null}"
-                @click="toggleSettings()"
-              >
-                <v-icon left>mdi-cog</v-icon> Settings
-              </v-btn>
-              <v-btn text @click="exportToFile()">
-                <v-icon left>mdi-file-export-outline</v-icon> Export
-              </v-btn>
-              <v-btn text @click="importFromFile()">
-                <v-icon left>mdi-file-import-outline</v-icon> Import
-              </v-btn>
-              <v-btn
-                icon
-                title="https://github.com/cb109/hunt_showdown_outfitter"
-                color="black"
-                @click="openGitHubPageInDefaultBrowser()"
-              >
-                <v-icon>mdi-github</v-icon>
-              </v-btn>
+              <div class="d-flex flex-column align-end">
+                <div
+                  if="currentFilepath"
+                  class="caption grey--text"
+                >
+                  {{ currentFilepath }}
+                </div>
+                <div class="d-flex flex-wrap">
+                  <v-btn
+                    icon
+                    large
+                    class="mr-2"
+                    :color="editing.settings ? 'primary' : null"
+                    @click="toggleSettings()"
+                    title="Settings"
+                  >
+                    <v-icon>mdi-cog</v-icon>
+                  </v-btn>
+                  <v-btn
+                    v-if="currentFilepath"
+                    icon
+                    class="mr-2"
+                    large
+                    :title="'Save to current file: ' + currentFilepath"
+                    @click="saveToCurrentFile()"
+                  >
+                    <v-icon>mdi-content-save</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    class="mr-2"
+                    large
+                    title="Save as new File"
+                    @click="exportToFile()"
+                  >
+                    <v-icon>mdi-file-export-outline</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    class="mr-2"
+                    large
+                    title="Open File"
+                    @click="importFromFile()"
+                  >
+                    <v-icon>mdi-file-import-outline</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    title="Check GitHub for updates: https://github.com/cb109/hunt_showdown_outfitter"
+                    large
+                    @click="openGitHubPageInDefaultBrowser()"
+                  >
+                    <v-icon>mdi-github</v-icon>
+                  </v-btn>
+                </div>
+              </div>
             </v-row>
             <!-- Loading indicator -->
             <div
@@ -583,6 +618,7 @@
         vuetify: new Vuetify(),
         data() {
           return {
+            currentFilepath: null,
             loading: false,
             estimate: {
               dialog: false,
@@ -682,7 +718,10 @@
         },
         mounted() {
           this.loading = true;
-          eel.load_data_from_last_filepath_in_userdir()(() => {
+          eel.load_data_from_last_filepath_in_userdir()((lastFilepath) => {
+            if (!!lastFilepath) {
+              this.currentFilepath = lastFilepath;
+            }
             // this.selectFirstLoadoutForEditing();
             this.loading = false;
           });
@@ -760,11 +799,21 @@
               loadout.excludes, itemSlotIndex, !loadout.excludes[itemSlotIndex]
             );
           },
+          saveToCurrentFile() {
+            if (!this.currentFilepath) {
+              return;
+            }
+            eel.save_to_file(this.fileData, this.currentFilepath);
+          },
           exportToFile() {
-            eel.choose_file_and_export_to(this.fileData);
+            eel.choose_file_and_export_to(this.fileData)(filepath => {
+              this.currentFilepath = filepath;
+            });;
           },
           importFromFile() {
-            eel.choose_file_and_import_from();
+            eel.choose_file_and_import_from()(filepath => {
+              this.currentFilepath = filepath;
+            });
           },
           loadFileData(data) {
             this.loadouts = data.loadouts;

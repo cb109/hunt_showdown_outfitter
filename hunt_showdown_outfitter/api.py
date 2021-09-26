@@ -7,6 +7,7 @@ import tkinter as tk
 import uuid
 import webbrowser
 from tkinter import filedialog
+from typing import Optional
 from typing import Tuple
 
 import eel
@@ -92,7 +93,7 @@ def get_primary_screen_size() -> Tuple[int, int]:
 
 @busy_locked
 @eel.expose()
-def load_data_from_last_filepath_in_userdir():
+def load_data_from_last_filepath_in_userdir() -> Optional[str]:
     memory_filepath = ui_automation.get_userdir_memory_filepath()
     if not os.path.isfile(memory_filepath):
         return
@@ -104,12 +105,14 @@ def load_data_from_last_filepath_in_userdir():
         with open(last_filepath) as f:
             data = json.loads(f.read())
             eel.loadFileData(data)
+
             eel.feedback(
                 f"Loadouts imported from last file: {last_filepath}",
                 2000,
                 "info",
                 "mdi-information-outline",
             )
+            return last_filepath
 
     except Exception as err:
         print(err)
@@ -117,7 +120,19 @@ def load_data_from_last_filepath_in_userdir():
 
 @busy_locked
 @eel.expose()
-def choose_file_and_export_to(data):
+def save_to_file(data: dict, filepath: str):
+    with open(filepath, "w") as file_handle:
+        file_handle.write(json.dumps(data, indent=2, sort_keys=True))
+        file_handle.close()
+
+        ui_automation.save_last_filepath_to_userdir(filepath)
+
+        eel.feedback(f"Saved to: {filepath}", 2000)
+
+
+@busy_locked
+@eel.expose()
+def choose_file_and_export_to(data) -> Optional[str]:
     root = tk.Tk()
     root.withdraw()
 
@@ -138,11 +153,12 @@ def choose_file_and_export_to(data):
     eel.feedback(
         f"File written to: {filepath}", 3000, "info", "mdi-information-outline"
     )
+    return filepath
 
 
 @busy_locked
 @eel.expose()
-def choose_file_and_import_from():
+def choose_file_and_import_from() -> Optional[str]:
     root = tk.Tk()
     root.withdraw()
 
@@ -170,6 +186,7 @@ def choose_file_and_import_from():
     )
 
     ui_automation.save_last_filepath_to_userdir(filepath)
+    return filepath
 
 
 @busy_locked
@@ -235,4 +252,4 @@ def put_hunt_in_foreground_and_equip_loadout_item_slot(
 @busy_locked
 @eel.expose()
 def open_git_hub_page_in_default_browser():
-    webbrowser.open(GITHUB_PAGE)
+    webbrowser.open_new(GITHUB_PAGE)
