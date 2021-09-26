@@ -781,8 +781,26 @@
           },
           setEstimationScreenSizeDefaults() {
             eel.get_primary_screen_size()((screenSize) => {
+              const autoEstimate = (
+                !this.currentFilepath &&
+                this.estimate.width == 1920 &&
+                this.estimate.height == 1080
+              );
+
               this.estimate.width = screenSize[0];
               this.estimate.height = screenSize[1];
+
+              if (autoEstimate) {
+                this.editSettings();
+                this.setEditingUiCoordinatesForResolution(
+                  this.estimate.width, this.estimate.height
+                );
+                this.saveSettings();
+                this.showSnackbarText(
+                  'Coordinates have been auto-estimated based on your screen',
+                  10000, 'info', 'mdi-information-outline'
+                );
+              }
             });
           },
           onEstimationDialogConfirmed() {
@@ -793,11 +811,11 @@
             this.setEditingUiCoordinatesForResolution(
               this.estimate.width, this.estimate.height
             );
+            this.showSnackbarText('Coordinates estimated');
           },
           setEditingUiCoordinatesForResolution(width, height) {
             const estimatedUiCoordinates = uiCoordinatesEstimator.estimate(width, height);
             this.editing.settings.uiCoordinates = deepCopy(estimatedUiCoordinates);
-            this.showSnackbarText('Coordinates estimated');
           },
           debugUiCoordinatesWithScreenshot(uiCoordinates) {
             eel.put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(
