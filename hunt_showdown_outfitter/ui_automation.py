@@ -1,12 +1,28 @@
+import ctypes
+import json
+import os
 import random
+from typing import Tuple
 
 import eel
 import pyautogui
 import pygetwindow
-import ctypes
-from typing import Tuple
-from hunt_showdown_outfitter.constants import GAME_WINDOW_TITLE
+
 from hunt_showdown_outfitter.constants import FRONTEND_LOADOUT_ITEM_SLOT_KEYS
+from hunt_showdown_outfitter.constants import GAME_WINDOW_TITLE
+from hunt_showdown_outfitter.constants import MEMORY_FILENAME
+
+
+def get_userdir_memory_filepath():
+    home = os.path.expanduser("~")
+    return os.path.join(home, MEMORY_FILENAME)
+
+
+def save_last_filepath_to_userdir(filepath):
+    memory_filepath = get_userdir_memory_filepath()
+    data = {"last_filepath": filepath}
+    with open(memory_filepath, "w") as f:
+        f.write(json.dumps(data, indent=2, sort_keys=True))
 
 
 def get_screen_size() -> Tuple[int, int]:

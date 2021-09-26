@@ -1,26 +1,22 @@
 import json
-import sys
-import eel
-import pyautogui
-import tempfile
-import tkinter as tk
-from tkinter import filedialog
-from PIL import ImageDraw, ImageFont
-import uuid
 import os
 import subprocess
+import sys
+import tempfile
+import tkinter as tk
+import uuid
+from tkinter import filedialog
 from typing import Tuple
 
+import eel
+import pyautogui
+from PIL import ImageDraw, ImageFont
+
+from hunt_showdown_outfitter import ui_automation
 from hunt_showdown_outfitter.constants import ALL_UI_COORDINATE_KEYS
 from hunt_showdown_outfitter.constants import COLOR_GREEN
 from hunt_showdown_outfitter.constants import EXPORT_FILE_WINDOW_TITLE
 from hunt_showdown_outfitter.constants import IMPORT_FILE_WINDOW_TITLE
-from hunt_showdown_outfitter.constants import MEMORY_FILENAME
-from hunt_showdown_outfitter.ui_automation import equip_loadout
-from hunt_showdown_outfitter.ui_automation import equip_loadout_item_slot
-from hunt_showdown_outfitter.ui_automation import get_screen_size
-from hunt_showdown_outfitter.ui_automation import put_hunt_showdown_window_to_background
-from hunt_showdown_outfitter.ui_automation import set_hunt_showdown_as_foreground_window
 
 # We'll use module level state to avoid running more than one Hunt
 # automation command at a time.
@@ -47,7 +43,7 @@ def put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(ui_coordinates
     """Create screenshot with coordinates overlayed and display it."""
 
     # Allow screenshot even if Hunt is not running.
-    set_hunt_showdown_as_foreground_window()
+    ui_automation.set_hunt_showdown_as_foreground_window()
 
     tempdir = tempfile.gettempdir()
     screenshot_filepath = os.path.join(
@@ -83,31 +79,19 @@ def put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(ui_coordinates
     image.save(screenshot_filepath)
 
     subprocess.run(["explorer", screenshot_filepath], shell=True)
-    put_hunt_showdown_window_to_background()
-
-
-def get_userdir_memory_filepath():
-    home = os.path.expanduser("~")
-    return os.path.join(home, MEMORY_FILENAME)
-
-
-def save_last_filepath_to_userdir(filepath):
-    memory_filepath = get_userdir_memory_filepath()
-    data = {"last_filepath": filepath}
-    with open(memory_filepath, "w") as f:
-        f.write(json.dumps(data, indent=2, sort_keys=True))
+    ui_automation.put_hunt_showdown_window_to_background()
 
 
 @busy_locked
 @eel.expose()
 def get_primary_screen_size() -> Tuple[int, int]:
-    return get_screen_size()
+    return ui_automation.get_screen_size()
 
 
 @busy_locked
 @eel.expose()
 def load_data_from_last_filepath_in_userdir():
-    memory_filepath = get_userdir_memory_filepath()
+    memory_filepath = ui_automation.get_userdir_memory_filepath()
     if not os.path.isfile(memory_filepath):
         return
     try:
@@ -147,7 +131,7 @@ def choose_file_and_export_to(data):
     file_handle.close()
 
     filepath = file_handle.name
-    save_last_filepath_to_userdir(filepath)
+    ui_automation.save_last_filepath_to_userdir(filepath)
 
     eel.feedback(
         f"File written to: {filepath}", 3000, "info", "mdi-information-outline"
@@ -183,7 +167,7 @@ def choose_file_and_import_from():
         f"Loadouts imported from: {filepath}", 2000, "info", "mdi-information-outline"
     )
 
-    save_last_filepath_to_userdir(filepath)
+    ui_automation.save_last_filepath_to_userdir(filepath)
 
 
 @busy_locked
@@ -229,10 +213,10 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict, ui_coordinates: dict
     Please note all incoming keys are strings, not numbers.
 
     """
-    if not set_hunt_showdown_as_foreground_window():
+    if not ui_automation.set_hunt_showdown_as_foreground_window():
         return
 
-    equip_loadout(loadout, ui_coordinates)
+    ui_automation.equip_loadout(loadout, ui_coordinates)
 
 
 @busy_locked
@@ -240,7 +224,7 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict, ui_coordinates: dict
 def put_hunt_in_foreground_and_equip_loadout_item_slot(
     loadout: dict, item_slot_index: int, ui_coordinates: dict
 ):
-    if not set_hunt_showdown_as_foreground_window():
+    if not ui_automation.set_hunt_showdown_as_foreground_window():
         return
 
-    equip_loadout_item_slot(loadout, str(item_slot_index), ui_coordinates)
+    ui_automation.equip_loadout_item_slot(loadout, str(item_slot_index), ui_coordinates)
