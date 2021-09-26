@@ -21,10 +21,10 @@ is done.
 ### Important Things to know
 
 - Configure your `Settings > UI Coordinates` in the tool first before creating loadouts.
-  - Start by pressing the **Estimate Coordinates** button and typing in your screen resolution, then tweak from there.
+  - Start by pressing the **Estimate Coordinates** button and typing in your screen resolution (should be the default already), then tweak from there if needed.
   - A great tool to figure out coordinates visually is using [Greenshot](https://getgreenshot.org/) and its "Capture region" function which will display x/y pixel coordinates as you go.
   - The debug-screenshot buttons seems to give best result using the `Window Mode: Borderless`.
-  - Each x/y coordinates should point roughly to the center of each UI element. Ideally in a way that it doesn't e.g. matter if a weapon slot is large/medium/small (just target the left side). The debug-screenshot results should look something like this:
+  - Each x/y coordinates should point roughly somewhere inside each UI element. Some randomness is applied later, so leave some pixels as wiggle room please. Ideally in a way that it doesn't matter if a weapon slot is e.g. large/medium/small (just target the left side). The debug-screenshot results should look something like this:
     ![](docs/debug_screenshot.png)
 - The equip-loadout buttons only work when Hunt: Showdown is running in `Window Mode: Fullscreen` and when you are on the `Roster > Overview` screen.
 - You need to have Chrome or Edge installed on your Windows machine.
