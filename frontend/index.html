@@ -528,6 +528,35 @@
         return JSON.parse(JSON.stringify(obj));
       }
 
+      /**
+       * Map a value from source range to target range.
+       *
+       *   Example:
+       *     mapRange(0, 100, 10, 20, 50)
+       *     >>> 15.0
+       *
+       *   Based on the rosettacode implementation.
+       *
+       *   Args:
+       *     sourceMin (Number): Lower border of source range
+       *     sourceMax (Number): Higher border of source range
+       *     targetMin (Number): Lower border of target range
+       *     targetMax (Number): Higher border of target range
+       *
+       *   Returns:
+       *     Number: The mapped value
+       *
+       */
+      function mapRange(sourceMin, sourceMax, targetMin, targetMax, value) {
+        return (
+          targetMin + (
+            (value - sourceMin) *
+            (targetMax - targetMin) /
+            (sourceMax - sourceMin)
+          )
+        )
+      }
+
       const DEFAULT_LOADOUT = {
         1: 'Romero',
         2: 'Pax',
@@ -565,9 +594,29 @@
       };
 
       const uiCoordinatesEstimator = {
-        // This data has been collected manually and is used as a base for estimation.
+        // Data has been collected manually as a base for estimation.
+        //
+        // Only a part of the interface is relevant here: On wider
+        // screens this will be centered and left/right will be filled
+        // up with empty placeholder space. We need to estimate
+        // coordinates in relation to this area first, then map them to
+        // absolute screen coordinates afterwards.
+        //
+        // All values below are absolute screen coordinates.
+
         sampleScreenWidth: 2560,
         sampleScreenHeight: 1080,
+
+        // 1920x1080 centered on screen basically
+        sampleAreaWidth: 1920,
+        sampleAreaHeight: 1080,
+
+        sampleAreaStartX: 320,
+        sampleAreaEndX: 2240,
+
+        sampleAreaStartY: 0,
+        sampleAreaEndY: 1080,
+
         sampleUiCoordinates: {
           '1': {'x': '1810', 'y': '305'},
           '2': {'x': '1810', 'y': '455'},
