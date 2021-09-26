@@ -22,7 +22,7 @@
             <v-row
               justify="center"
               align="center"
-              class="mt-4 pb-2"
+              class="pb-2"
             >
               <div>
                 <h1>Hunt: Showdown Outfitter</h1>
@@ -49,6 +49,14 @@
               </v-btn>
               <v-btn text @click="importFromFile()">
                 <v-icon left>mdi-file-import-outline</v-icon> Import
+              </v-btn>
+              <v-btn
+                icon
+                title="https://github.com/cb109/hunt_showdown_outfitter"
+                color="black"
+                @click="openGitHubPageInDefaultBrowser()"
+              >
+                <v-icon>mdi-github</v-icon>
               </v-btn>
             </v-row>
             <!-- Loading indicator -->
@@ -681,6 +689,9 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          openGitHubPageInDefaultBrowser() {
+            eel.open_git_hub_page_in_default_browser();
+          },
           selectFirstLoadoutForEditing() {
             if (this.loadouts.length > 0) {
               this.modifyLoadout(this.loadouts[0]);

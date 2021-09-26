@@ -15,3 +15,5 @@ ALL_UI_COORDINATE_KEYS = [
     "remove_filters_button",
     "first_item_in_list",
 ]
+
+GITHUB_PAGE = "https://github.com/cb109/hunt_showdown_outfitter"
