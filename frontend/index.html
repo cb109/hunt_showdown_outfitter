@@ -778,6 +778,7 @@
           },
           editSettings() {
             this.editing.settings = deepCopy(this.settings);
+            this.cancelEditingLoadout();
           },
           cancelSettings() {
             this.editing.settings = null;
