@@ -20,9 +20,6 @@ is done.
 
 ### Important Things to know
 
-- Empty item slots will be deselected in Hunt when equipping.
-- You can exclude item slots on a loadout using the checkbox, those will be skipped when equipping. That way you can e.g. just define tools and consumables as a base-loadout.
-- Shift-Clicking the item checkbox will equip just this item slot in Hunt. Useful for debugging loadouts.
 - Configure your `Settings > UI Coordinates` in the tool first before creating loadouts.
   - Start by pressing the **Estimate Coordinates** button and typing in your screen resolution, then tweak from there.
   - A great tool to figure out coordinates visually is using [Greenshot](https://getgreenshot.org/) and its "Capture region" function which will display x/y pixel coordinates as you go.
@@ -31,13 +28,16 @@ is done.
     ![](docs/debug_screenshot.png)
 - The equip-loadout buttons only work when Hunt: Showdown is running in `Window Mode: Fullscreen` and when you are on the `Roster > Overview` screen.
 - You need to have Chrome or Edge installed on your Windows machine.
+- Empty item slots will be deselected in Hunt when equipping.
+- You can exclude item slots on a loadout using the checkbox, those will be skipped when equipping. That way you can e.g. just define tools and consumables as a base-loadout.
+- Shift-Clicking the item checkbox will equip just this item slot in Hunt. Useful for debugging loadouts.
+- After uneqipping an item, before equipping the desired item, the `Enter` key is pressed to get rid of a potential `Discard Item` dialog.
 - The last imported/exported file that is openend on launch is remembered in this file: `C:\Users\your-username\hunt_showdown_outfitter.json`
 
 ### Known Issues
 
 - When the tool is opened it will auto-load the latest exported/imported file. But file handling is still very clunky. Remember to export to a file after you have changed something, so that those changes are saved.
-- The tool has no idea about Hunt's items or current state, it just moves the mouse and clicks, so some specific situations are currently not handled:
-  - `Item will be discarded - Yes/No`": This dialog will unfortunately interrupt the equipment procedure
+- The tool has no idea about Hunt's items or current state, it just moves the mouse and clicks, so some specific situations may not be properly
 - Special ammo is not yet supported.
 
 ### Development
