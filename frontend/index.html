@@ -636,11 +636,72 @@
         estimate: function(width, height) {
           const estimatedUiCoordinates = {};
 
+          const sampleAreaRatio = this.sampleAreaWidth / this.sampleAreaHeight;
+
+          // Assuming always a landscape screen here (fillup height, scale width accordingly).
+          const newAreaWidth = height * sampleAreaRatio;
+          const newAreaHeight = height;
+
+          // Find start and end points by centering area horizontally on screen.
+          const newAreaStartX = (width - newAreaWidth) / 2;
+          const newAreaEndX = width - newAreaStartX;
+
+          const newAreaStartY = 0;
+          const newAreaEndY = newAreaHeight;
+
           for (const key of Object.keys(this.sampleUiCoordinates)) {
+            // Sample coordinates absolute to screen.
             const sampleX = this.sampleUiCoordinates[key].x;
             const sampleY = this.sampleUiCoordinates[key].y;
-            const x = Math.round(width / (this.sampleScreenWidth / sampleX));
-            const y = Math.round(height / (this.sampleScreenHeight / sampleY));
+
+            const sampleAreaX = mapRange(
+              this.sampleAreaStartX,
+              this.sampleAreaEndX,
+              0,
+              this.sampleAreaWidth,
+              sampleX
+            );
+            const sampleAreaY = mapRange(
+              this.sampleAreaStartY,
+              this.sampleAreaEndY,
+              0,
+              this.sampleAreaHeight,
+              sampleY
+            );
+
+            const newAreaX = mapRange(
+              0,
+              this.sampleAreaWidth,
+              0,
+              newAreaWidth,
+              sampleAreaX
+            );
+            const newAreaY = mapRange(
+              0,
+              this.sampleAreaHeight,
+              0,
+              newAreaHeight,
+              sampleAreaY
+            );
+
+            const newAreaXOnScreen = mapRange(
+              0,
+              newAreaWidth,
+              newAreaStartX,
+              newAreaEndX,
+              newAreaX
+            );
+            const newAreaYOnScreen = mapRange(
+              0,
+              newAreaHeight,
+              newAreaStartY,
+              newAreaEndY,
+              newAreaY
+            );
+
+            const x = Math.round(newAreaXOnScreen);
+            const y = Math.round(newAreaYOnScreen);
+
             estimatedUiCoordinates[key] = {"x": String(x), "y": String(y)};
           }
 
