@@ -32,7 +32,7 @@ is done.
 - You can exclude item slots on a loadout using the checkbox, those will be skipped when equipping. That way you can e.g. just define tools and consumables as a base-loadout.
 - Shift-Clicking the item checkbox will equip just this item slot in Hunt. Useful for debugging loadouts.
 - After uneqipping an item, before equipping the desired item, the `Enter` key is pressed to get rid of a potential `Discard Item` dialog.
-- The last imported/exported file that is openend on launch is remembered in this file: `C:\Users\your-username\hunt_showdown_outfitter.json`
+- The last imported/exported file that is opened on launch is remembered in this file: `C:\Users\your-username\hunt_showdown_outfitter.json`
 
 ### Known Issues
 
