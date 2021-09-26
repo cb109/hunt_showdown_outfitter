@@ -16,6 +16,8 @@ import uuid
 import os
 import subprocess
 import platform
+import ctypes
+from typing import Tuple
 
 # We'll use module level state to avoid running more than one Hunt
 # automation command at a time.
@@ -52,6 +54,11 @@ def busy_locked(func):
             this.busy = False
 
     return inner
+
+
+def get_screen_size() -> Tuple[int, int]:
+    user32 = ctypes.windll.user32
+    return user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
 
 def set_hunt_showdown_as_foreground_window() -> bool:
@@ -241,6 +248,12 @@ def save_last_filepath_to_userdir(filepath):
     data = {"last_filepath": filepath}
     with open(memory_filepath, "w") as f:
         f.write(json.dumps(data, indent=2, sort_keys=True))
+
+
+@busy_locked
+@eel.expose()
+def get_primary_screen_size() -> Tuple[int, int]:
+    return get_screen_size()
 
 
 @busy_locked

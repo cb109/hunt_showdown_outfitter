@@ -811,9 +811,16 @@
           },
         },
         mounted() {
+          this.setEstimationScreenSizeDefaults();
           eel.load_data_from_last_filepath_in_userdir();
         },
         methods: {
+          setEstimationScreenSizeDefaults() {
+            eel.get_primary_screen_size()((screenSize) => {
+              this.estimate.width = screenSize[0];
+              this.estimate.height = screenSize[1];
+            });
+          },
           onEstimationDialogConfirmed() {
             if (!this.editing.settings) {
               return;
