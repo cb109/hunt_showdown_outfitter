@@ -491,7 +491,7 @@
                   "
                 >
                   <div class="white">
-                    <v-btn text color="secondary" @click="cancelEditing()">Cancel</v-btn>
+                    <v-btn text color="secondary" @click="cancelEditingLoadout()">Cancel</v-btn>
                     <v-btn
                       color="primary"
                       :disabled="!canSaveEditing"
@@ -757,6 +757,10 @@
           },
           loadFileData(data) {
             this.loadouts = data.loadouts;
+            if (this.editing.loadout) {
+              this.cancelEditingLoadout();
+            }
+
             if (data.settings) {
               this.settings = data.settings;
               if (this.editing.settings) {
@@ -808,7 +812,7 @@
               }
             }
           },
-          cancelEditing() {
+          cancelEditingLoadout() {
             this.editing.loadout = null;
           },
           labelExistsMoreThan(label, num) {
@@ -857,7 +861,7 @@
               const loadoutIds = this.loadouts.map(loadout => loadout.id);
               if (loadoutIds.indexOf(this.editing.loadout.id) === -1) {
                 // Edited loadout has been deleted.
-                this.cancelEditing();
+                this.cancelEditingLoadout();
               }
             }
           },
