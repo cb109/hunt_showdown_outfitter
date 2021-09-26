@@ -304,49 +304,54 @@
                 </v-row>
                 <v-list>
                   <template v-for="(loadout, loadoutIndex) in sortedLoadouts">
-                    <v-list-item
-                      :key="'loadout-' + loadoutIndex"
-                      title="Edit this Loadout"
-                      @click="modifyLoadout(loadout)"
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title
-                          :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
+                    <v-hover v-slot="{hover}">
+                      <v-list-item
+                        :key="'loadout-' + loadoutIndex"
+                        title="Edit this Loadout"
+                        @click="modifyLoadout(loadout)"
+                      >
+                        <v-list-item-content>
+                          <v-list-item-title
+                            :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
+                          >
+                            {{ loadout.label }}
+                          </v-list-item-title>
+                          <v-list-item-subtitle
+                            :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
+                          >
+                            {{ loadout[1] }}<span v-if="loadout[1]">, </span>{{ loadout[2] }}
+                          </v-list-item-subtitle>
+                        </v-list-item-content>
+                        <div
+                          v-if="hover || (editing.loadout && editing.loadout.id == loadout.id)"
+                          class="d-flex"
                         >
-                          {{ loadout.label }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle
-                          :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
-                        >
-                          {{ loadout[1] }}<span v-if="loadout[1]">, </span>{{ loadout[2] }}
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                      <div class="d-flex">
-                        <v-btn
-                          icon
-                          color="primary"
-                          title="Equip this Loadout"
-                          @click.stop="equipLoadout(loadout)"
-                        >
-                          <v-icon>mdi-play</v-icon>
-                        </v-btn>
-                        <v-btn
-                          icon
-                          title="Duplicate this Loadout"
-                          @click.stop="duplicateLoadout(loadout)"
-                        >
-                          <v-icon>mdi-content-copy</v-icon>
-                        </v-btn>
-                        <v-btn
-                          icon
-                          color="error"
-                          title="Delete this Loadout"
-                          @click.stop="askDeleteLoadout(loadout)"
-                        >
-                          <v-icon>mdi-delete-outline</v-icon>
-                        </v-btn>
-                      </div>
-                    </v-list-item>
+                          <v-btn
+                            icon
+                            color="primary"
+                            title="Equip this Loadout"
+                            @click.stop="equipLoadout(loadout)"
+                          >
+                            <v-icon>mdi-play</v-icon>
+                          </v-btn>
+                          <v-btn
+                            icon
+                            title="Duplicate this Loadout"
+                            @click.stop="duplicateLoadout(loadout)"
+                          >
+                            <v-icon>mdi-content-copy</v-icon>
+                          </v-btn>
+                          <v-btn
+                            icon
+                            color="error"
+                            title="Delete this Loadout"
+                            @click.stop="askDeleteLoadout(loadout)"
+                          >
+                            <v-icon>mdi-delete-outline</v-icon>
+                          </v-btn>
+                        </div>
+                      </v-list-item>
+                    </v-hover>
                     <v-divider
                       v-if="loadoutIndex < loadouts.length - 1"
                       :key="'divider-' + loadoutIndex"
