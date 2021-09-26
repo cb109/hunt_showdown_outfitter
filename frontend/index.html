@@ -76,9 +76,9 @@
                     <p>You can tweak each coordinate pair here.</p>
                   </div>
                   <v-btn
-                    class="ml-auto"
-                    text
-                    color="primary"
+                    outlined
+                    color="secondary"
+                    class="ml-4"
                     @click="estimate.dialog = true"
                   >
                     <v-icon left>mdi-ruler</v-icon>
@@ -582,6 +582,7 @@
           'search_box': {'x': '870', 'y': '230'},
           'first_item_in_list': {'x': '985', 'y': '310'},
           'remove_filters_button': {'x': '1660', 'y': '225'},
+          // 'discard_item_dialog_yes_button': {'x': '1111', 'y': '732'},
         },
         estimate: function(width, height) {
           const estimatedUiCoordinates = {};
