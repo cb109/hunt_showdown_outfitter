@@ -160,20 +160,21 @@
                         v-model="editing.settings.uiCoordinates[itemSlotIndex].x"
                         label="X"
                         type="number"
-                        class="number-input mr-3"
+                        class="mr-2"
+                        style="max-width: 120px"
                         hide-details
-                        outlined
                         suffix="px"
-                        ></v-text-field>
+                        solo
+                      ></v-text-field>
                       <v-text-field
                         v-model="editing.settings.uiCoordinates[itemSlotIndex].y"
                         label="Y"
                         type="number"
-                        class="number-input"
+                        style="max-width: 120px"
                         hide-details
-                        outlined
                         suffix="px"
-                        ></v-text-field>
+                        solo
+                      ></v-text-field>
                     </div>
                   </v-col>
                   <v-spacer></v-spacer>
@@ -579,7 +580,7 @@
           '9': {'x': '1990', 'y': '750'},
           '10': {'x': '2085', 'y': '750'},
           'search_box': {'x': '870', 'y': '230'},
-          'first_item_in_list': {'x': '950', 'y': '310'},
+          'first_item_in_list': {'x': '985', 'y': '310'},
           'remove_filters_button': {'x': '1660', 'y': '225'},
         },
         estimate: function(width, height) {
