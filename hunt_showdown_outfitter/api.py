@@ -101,6 +101,8 @@ def load_data_from_last_filepath_in_userdir() -> Optional[str]:
         with open(memory_filepath) as f:
             data = json.loads(f.read())
             last_filepath = data["last_filepath"]
+            if not last_filepath:
+                return
 
         with open(last_filepath) as f:
             data = json.loads(f.read())
@@ -249,3 +251,9 @@ def put_hunt_in_foreground_and_equip_loadout_item_slot(
 @eel.expose()
 def open_git_hub_page_in_default_browser():
     webbrowser.open_new(GITHUB_PAGE)
+
+
+@busy_locked
+@eel.expose()
+def forget_last_filepath():
+    ui_automation.save_last_filepath_to_userdir("")

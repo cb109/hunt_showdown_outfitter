@@ -46,7 +46,7 @@
                     icon
                     x-small
                     title="Reset current filepath"
-                    @click="currentFilepath = null"
+                    @click="resetCurrentFilepath()"
                   >
                     <v-icon color="error lighten-4">mdi-close</v-icon>
                   </v-btn>
@@ -576,7 +576,7 @@
                       color="primary"
                       rounded
                       :disabled="!canSaveEditing"
-                      @click="saveEditing()"
+                      @click="saveEditingLoadout()"
                     >
                       Save Loadout
                     </v-btn>
@@ -767,6 +767,10 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          resetCurrentFilepath() {
+            this.currentFilepath = null;
+            eel.forget_last_filepath();
+          },
           openGitHubPageInDefaultBrowser() {
             eel.open_git_hub_page_in_default_browser();
           },
@@ -793,7 +797,7 @@
           setEditingUiCoordinatesForResolution(width, height) {
             const estimatedUiCoordinates = uiCoordinatesEstimator.estimate(width, height);
             this.editing.settings.uiCoordinates = deepCopy(estimatedUiCoordinates);
-            this.showSnackbarText('Coordinates updated');
+            this.showSnackbarText('Coordinates estimated');
           },
           debugUiCoordinatesWithScreenshot(uiCoordinates) {
             eel.put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(
@@ -899,7 +903,7 @@
           getNewId() {
             return this.getHighestId() + 1;
           },
-          saveEditing() {
+          saveEditingLoadout() {
             if (!this.editing.loadout) {
               return;
             }
