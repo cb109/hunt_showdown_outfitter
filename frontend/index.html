@@ -22,8 +22,11 @@
   <body>
     <div id="app">
       <v-app>
-        <v-main>
-          <v-container class="fill-height">
+        <v-main class="ma-5">
+          <v-container
+            fluid
+            class="fill-height"
+          >
             <!-- Header -->
             <v-row
               justify="center"
@@ -57,9 +60,22 @@
                 <v-icon left>mdi-file-import-outline</v-icon> Import
               </v-btn>
             </v-row>
+            <!-- Loading indicator -->
+            <div
+              v-if="loading"
+              class="d-flex justify-center fill-height"
+              style="width: 100%; margin-top: 100px;"
+            >
+              <v-progress-circular
+                indeterminate
+                color="primary"
+                size="72"
+                width="5"
+              ></v-progress-circular>
+            </div>
             <!-- Settings Overlay Page -->
             <v-row
-              v-if="editing.settings"
+              v-if="!loading && editing.settings"
               class="fill-height"
             >
               <v-col>
@@ -215,7 +231,7 @@
             </v-row>
             <!-- Main Page -->
             <v-row
-              v-else
+              v-else-if="!loading"
               class="fill-height"
             >
               <!-- Left column -->
@@ -483,7 +499,7 @@
                     right: 36px;
                   "
                 >
-                  <div>
+                  <div class="white">
                     <v-btn text color="secondary" @click="cancelEditing()">Cancel</v-btn>
                     <v-btn
                       color="primary"
@@ -527,7 +543,7 @@
     <script type="text/javascript" src="/js/estimator.js"></script>
     <script>
 
-      const DEFAULT_LOADOUT = {
+        const DEFAULT_LOADOUT = {
         1: 'Romero',
         2: 'Pax',
         3: 'Knuckle Knife',
@@ -568,6 +584,7 @@
         vuetify: new Vuetify(),
         data() {
           return {
+            loading: false,
             estimate: {
               dialog: false,
               width: 1920,
@@ -665,10 +682,19 @@
           },
         },
         mounted() {
+          this.loading = true;
+          eel.load_data_from_last_filepath_in_userdir()(() => {
+            // this.selectFirstLoadoutForEditing();
+            this.loading = false;
+          });
           this.setEstimationScreenSizeDefaults();
-          eel.load_data_from_last_filepath_in_userdir();
         },
         methods: {
+          selectFirstLoadoutForEditing() {
+            if (this.loadouts.length > 0) {
+              this.modifyLoadout(this.loadouts[0]);
+            }
+          },
           setEstimationScreenSizeDefaults() {
             eel.get_primary_screen_size()((screenSize) => {
               this.estimate.width = screenSize[0];
