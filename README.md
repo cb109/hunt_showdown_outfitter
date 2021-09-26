@@ -38,6 +38,7 @@ is done.
 
 - When the tool is opened it will auto-load the latest exported/imported file. But file handling is still very clunky. Remember to export to a file after you have changed something, so that those changes are saved.
 - The tool has no idea about Hunt's items or current state, it just moves the mouse and clicks, so some specific situations may not be properly
+- Trying to select the "Knife" will equip the Heavy Knife, as it always matches as first in  the list. Try a Knife legendary skin instead.
 - Special ammo is not yet supported.
 
 ### Development
