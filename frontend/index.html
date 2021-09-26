@@ -826,6 +826,7 @@
           setEditingUiCoordinatesForResolution(width, height) {
             const estimatedUiCoordinates = uiCoordinatesEstimator.estimate(width, height);
             this.editing.settings.uiCoordinates = deepCopy(estimatedUiCoordinates);
+            this.showSnackbarText('Coordinates updated');
           },
           debugUiCoordinatesWithScreenshot(uiCoordinates) {
             eel.put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(
