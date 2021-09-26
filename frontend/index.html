@@ -819,6 +819,9 @@
             this.loadouts = data.loadouts;
             if (data.settings) {
               this.settings = data.settings;
+              if (this.editing.settings) {
+                this.editSettings();
+              }
             }
           },
           equipLoadout(loadout) {
