@@ -154,10 +154,7 @@
                   <v-col
                     v-for="itemSlotIndex in block.slots"
                     :key="'block-item-slot-' + itemSlotIndex"
-                    cols="12"
-                    sm="6"
-                    md="3"
-                    xl="auto"
+                    cols="auto"
                   >
                     <div class="caption mb-2">
                       {{ itemSlotLabels[itemSlotIndex] }}
@@ -195,7 +192,7 @@
                     right: 24px;
                   "
                 >
-                  <v-row align="center">
+                  <div class="d-flex align-center">
                     <v-btn
                       style="margin-left: 64px"
                       color="secondary"
@@ -204,10 +201,13 @@
                       <v-icon left>mdi-image-outline</v-icon>
                       Debug with a Screenshot
                     </v-btn>
-                    <div class="ml-3 caption info--text">
+                    <div
+                      v-if="$vuetify.breakpoint.mdAndUp"
+                      class="ml-3 caption info--text"
+                    >
                       Please use <b>Window Mode: Borderless</b> and go to Equipment first
                     </div>
-                  </v-row>
+                  </div>
                   <div class="ml-auto">
                     <v-btn text color="secondary" @click="cancelSettings()">Cancel</v-btn>
                     <v-btn
@@ -244,29 +244,29 @@
                     <v-list-item
                       :key="'loadout-' + loadoutIndex"
                       title="Edit this Loadout"
-                      :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
                       @click="modifyLoadout(loadout)"
                     >
+                      <v-list-item-content>
+                        <v-list-item-title
+                          :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
+                        >
+                          {{ loadout.label }}
+                        </v-list-item-title>
+                        <v-list-item-subtitle
+                          :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
+                        >
+                          {{ loadout[1] }}<span v-if="loadout[1]">, </span>{{ loadout[2] }}
+                        </v-list-item-subtitle>
+                      </v-list-item-content>
                       <div class="d-flex">
                         <v-btn
                           icon
                           color="primary"
-                          class="mr-3"
                           title="Equip this Loadout"
                           @click.stop="equipLoadout(loadout)"
                         >
                           <v-icon>mdi-play</v-icon>
                         </v-btn>
-                      </div>
-                      <v-list-item-content>
-                        <v-list-item-title>
-                          {{ loadout.label }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle>
-                          {{ loadout[1] }}<span v-if="loadout[1]">, </span>{{ loadout[2] }}
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                      <div class="d-flex">
                         <v-btn
                           icon
                           title="Duplicate this Loadout"
@@ -299,8 +299,8 @@
                 md="7"
                 xl="8"
               >
-                <div class="title mt-3 mb-3">Name of Loadout</div>
-                <v-row class="mb-5">
+                <div class="title mt-3 mb-2">Name of Loadout</div>
+                <v-row class="mb-3">
                   <v-col>
                     <!-- Label -->
                     <v-text-field
@@ -315,7 +315,7 @@
                   </v-col>
                 </v-row>
                 <!-- Weapons -->
-                <div class="title mt-3 mb-3">Weapons</div>
+                <div class="subtitle-2 mt-3 mb-3">Weapons</div>
                 <v-row dense>
                   <v-col>
                     <v-text-field
@@ -351,7 +351,7 @@
                   </v-col>
                 </v-row>
                 <!-- Tools -->
-                <div class="title mt-3 mb-3">Tools</div>
+                <div class="subtitle-2 mt-3 mb-3">Tools</div>
                 <v-row dense>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
@@ -415,7 +415,7 @@
                   </v-col>
                 </v-row>
                 <!-- Consumables -->
-                <div class="title mt-3 mb-3">Consumables</div>
+                <div class="subtitle-2 mt-3 mb-3">Consumables</div>
                 <v-row dense>
                   <v-col cols="12" md="6" lg="3">
                     <v-text-field
