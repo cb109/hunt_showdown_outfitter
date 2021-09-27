@@ -1,68 +1,88 @@
+
+![](docs/robot.jpg)
+
 # Hunt: Showdown Outfitter
 
 A tool to manage item presets for **Hunt: Showdown** and semi-automatically
-equip them in the game by automating mouse and keyboard against
+equip them in the game by automating mouse/keyboard input against
 preconfigured UI coordinates.
 
-The tool is pretty dumb and only works in the Roster > Overview screen,
-you can only use it to equip items, no other automation during the game
-is done.
-
-### Use at your own Risk
+## Use at your own Risk
 
 - This software is a personal project and in no way affiliated with Crytek or the game itself.
 - I am just so annoyed by equipping my hunters with the same loadouts all over again that I created this.
 - **Attention**: The automation of keyboard/mouse input when using this tool can get you banned by the anti-cheat system. You have been warned.
 
-### UI Screenshot
+## How to use
 
-![](docs/ui_loadouts.png)
+Read the disclaimer above!
 
----
+### Installation
+- Download the latest `hunt_showdown_outfitter.exe` [from this page](https://github.com/cb109/hunt_showdown_outfitter/releases) (you can find the files under the release **Assets**)
+
+### Initial Setup
+- Launch `Hunt: Showdown` and set it to use `Window Mode: Borderless` temporarily
+- Start the tool: It should show the settings screen with your UI coordinates estimated automatically.
+  - In `Hunt: Showdown`, go to the `Roster > Equipment` screen
+  - In the tool, press the `Debug with a Screenshot` button and see if the result looks good.
+  - Tweak UI coordinates manually as needed and don't forget to press `Save Settings` when done.
+- Once happy with the UI coordinates, please save your file using the `Save As` button in the upper right corner of the screen.
+- Now you can start creating/editing loadouts.
+  - Don't forget to save each loadout.
+  - Don't forget to use the `Save`/`Save As` buttons to save the file overall once you are done editing.
+
+### Equipping a Loadout
+
+- Make sure `Hunt: Showdown` is running and is set to use `Window Mode: Fullscreen`, otherwise automation may fail.
+- Make sure that within `Hunt: Showdown` you are on the `Roster > Equipment` screen.
+- In the tool, equip a loadout via one of the buttons or by doubleclicking it in the list.
+  - You can also equip single items of a loadout py shift-leftclicking its checkbox. This is mainly useful to debug the text you've written in the item field.
+  - An empty slot in the tool means the slot will be emptied in the game.
+    - If the item checkbox is disabled the slot will be skipped (e.g. for loadouts that only define tools and consumables).
+
+## Screenshots of the Interface
 
 ![](docs/ui_settings.png)
 
-### Important Things to know
+---
 
-- Configure your `Settings > UI Coordinates` in the tool first before creating loadouts.
-  - Start by pressing the **Estimate Coordinates** button and typing in your screen resolution (should be the default already), then tweak from there if needed.
-  - A great tool to figure out coordinates visually is using [Greenshot](https://getgreenshot.org/) and its "Capture region" function which will display x/y pixel coordinates as you go.
-  - The debug-screenshot buttons seems to give best result using the `Window Mode: Borderless`.
-  - Each x/y coordinates should point roughly somewhere inside each UI element. Some randomness is applied later, so leave some pixels as wiggle room please. Ideally in a way that it doesn't matter if a weapon slot is e.g. large/medium/small (just target the left side). The debug-screenshot results should look something like this:
-    ![](docs/debug_screenshot.png)
-- The equip-loadout buttons only work when Hunt: Showdown is running in `Window Mode: Fullscreen` and when you are on the `Roster > Overview` screen.
-- You need to have Chrome or Edge installed on your Windows machine.
-- Empty item slots will be deselected in Hunt when equipping.
-- You can exclude item slots on a loadout using the checkbox, those will be skipped when equipping. That way you can e.g. just define tools and consumables as a base-loadout.
-- Shift-Clicking the item checkbox will equip just this item slot in Hunt. Useful for debugging loadouts.
-- After uneqipping an item, before equipping the desired item, the `Enter` key is pressed to get rid of a potential `Discard Item` dialog.
-- The last imported/exported file that is opened on launch is remembered in this file: `C:\Users\your-username\hunt_showdown_outfitter.json`
+![](docs/ui_loadouts.png)
 
-### Known Issues
+## Helpful Things to know
+
+- A great tool to figure out coordinates visually is using [Greenshot](https://getgreenshot.org/) and its "Capture region" function which will display x/y pixel coordinates as you go.
+- The debug-screenshot buttons seems to give best result using the `Window Mode: Borderless`.
+- Each x/y coordinates should point roughly somewhere inside each UI element. Some randomness is applied later, so leave some pixels as wiggle room please. Ideally in a way that it doesn't matter if a weapon slot is e.g. large/medium/small (just target the left side). The debug-screenshot results should look something like this:
+  ![](docs/debug_screenshot.png)
+- Items are equipped using doubleclick, which just assigns them from the inventory if available or buys them if needed. Unfortunately there is no way to prefer/select contraband items right now.
+- It doesn't matter if your current Hunter already has items equipped, those will be unequipped if possible, but discarded if needed. So maybe unequip your extra Nitro manually if you don't want to lose it.
+- The last imported/exported file that is opened on launch is remembered in this file: `C:\Users\your-username\hunt_showdown_outfitter.json`. Clicking the `Reset current filepath` marker will delete this file, so you can start fresh if needed.
+- You need to have Chrome or Edge installed on your Windows machine for the frontend to work.
+
+## Known Issues
 
 - When the tool is opened it will auto-load the latest saved/opened file.  File handling is still pretty clunky: Settings and loadouts must each be saved individually, but the changes are only written to disk when you press the Save button in the top toolbar.
-- The tool has no idea about Hunt's items or current state, it just moves the mouse and clicks, so some specific situations may not be properly
-- Trying to select the "Knife" will equip the Heavy Knife, as it always matches as first in  the list. Try a Knife legendary skin instead.
+- The tool has absolutely no idea about Hunt's item system or current game state, it just moves the mouse and clicks and types the text you specified. As a result, some situations can not be easily handled, e.g. trying to select the "Knife" will equip the Heavy Knife, as it always matches as first in  the list. Use a legendary skin with a more unique name instead.
 - Special ammo is not yet supported.
 
-### Development
+## Development
 
-#### Prerequisites
+### Prerequisites
 
-Download and install Python 3.6+
+Download and install Python 3.7+
 
 ```bash
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
-#### Run local instance
+### Run local instance
 ```bash
-$ python main.py
+python main.py
 ```
 
-#### Build single file .exe
+### Build single file .exe
 
 ```bash
-$ pip install pyinstaller
-$ python -m eel --onefile --noconsole main.py frontend
+pip install pyinstaller
+python -m eel --onefile --noconsole main.py frontend --icon build.ico
 ```
