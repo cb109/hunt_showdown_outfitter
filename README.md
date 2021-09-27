@@ -37,6 +37,7 @@ Read the disclaimer above!
 - Make sure that within `Hunt: Showdown` you are on the `Roster > Equipment` screen.
 - In the tool, equip a loadout via one of the buttons or by doubleclicking it in the list.
   - You can also equip single items of a loadout py shift-leftclicking its checkbox. This is mainly useful to debug the text you've written in the item field.
+  - If you want to stop the equipment procedure (or started it while on the wrong screen in game) simply hold the `Esc` key.
   - An empty slot in the tool means the slot will be emptied in the game.
     - If the item checkbox is disabled the slot will be skipped (e.g. for loadouts that only define tools and consumables).
 
