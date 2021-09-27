@@ -7,20 +7,25 @@ import platform
 
 from hunt_showdown_outfitter import api  # This exposes the eel functions.
 
+__version__ = "0.5.0"
+
 
 def open_gui():
     page = "index.html"
-    size = (1280, 900)
-    port = 8066
+    eel_kwargs = {
+        "size": (1280, 900),
+        "port": 8066,
+        "title": __version__,
+    }
 
     eel.init("frontend")
     try:
-        eel.start(page, size=size, port=port)
+        eel.start(page, **eel_kwargs)
     except EnvironmentError:
         # If default browser (Chrome) isn't found, fallback to Microsoft Edge on Win10 or greater
         # https://github.com/ChrisKnott/Eel/blob/master/examples/07%20-%20CreateReactApp/eel_CRA.py#L68-L70
         if sys.platform in ["win32", "win64"] and int(platform.release()) >= 10:
-            eel.start(page, size=size, port=port)
+            eel.start(page, mode="edge", **eel_kwargs)
         else:
             raise
 
