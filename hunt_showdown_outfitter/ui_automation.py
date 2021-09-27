@@ -5,6 +5,7 @@ import random
 from typing import Tuple
 
 import eel
+import keyboard
 import pyautogui
 import pygetwindow
 
@@ -30,6 +31,34 @@ def get_screen_size() -> Tuple[int, int]:
     return user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
 
+def get_move_time(
+    minimum: float = 0.05, maximum: float = 0.15, num_decimals: int = 2
+) -> float:
+    return round(random.uniform(minimum, maximum), num_decimals)
+
+
+def get_type_interval(
+    minimum: float = 0.005, maximum: float = 0.025, num_decimals: int = 2
+) -> float:
+    return round(random.uniform(minimum, maximum), num_decimals)
+
+
+def skipped_by_escape_key(func):
+    """Skip function call when escape key is being pressed.
+
+    Use as a function decorator.
+
+    """
+
+    def inner(*args, **kwargs):
+        if keyboard.is_pressed("esc"):
+            return
+        return func(*args, **kwargs)
+
+    return inner
+
+
+@skipped_by_escape_key
 def set_hunt_showdown_as_foreground_window() -> bool:
     game_window = None
     for window in pygetwindow.getWindowsWithTitle(GAME_WINDOW_TITLE):
@@ -48,6 +77,7 @@ def set_hunt_showdown_as_foreground_window() -> bool:
     return True
 
 
+@skipped_by_escape_key
 def put_hunt_showdown_window_to_background() -> bool:
     game_window = None
     for window in pygetwindow.getWindowsWithTitle(GAME_WINDOW_TITLE):
@@ -65,18 +95,7 @@ def put_hunt_showdown_window_to_background() -> bool:
     return True
 
 
-def get_move_time(
-    minimum: float = 0.05, maximum: float = 0.15, num_decimals: int = 2
-) -> float:
-    return round(random.uniform(minimum, maximum), num_decimals)
-
-
-def get_type_interval(
-    minimum: float = 0.005, maximum: float = 0.025, num_decimals: int = 2
-) -> float:
-    return round(random.uniform(minimum, maximum), num_decimals)
-
-
+@skipped_by_escape_key
 def smooth_move(x, y, random_offset_up_to=10):
     x = int(x)
     y = int(y)
@@ -94,45 +113,54 @@ def smooth_move(x, y, random_offset_up_to=10):
     )
 
 
+@skipped_by_escape_key
 def reset_filters(x, y):
     smooth_move(x, y)
     pyautogui.click()
 
 
+@skipped_by_escape_key
 def focus_search_box(x, y):
     smooth_move(x, y)
     pyautogui.click()
 
 
+@skipped_by_escape_key
 def select_item_slot(x, y):
     smooth_move(x, y)
     pyautogui.click()
 
 
+@skipped_by_escape_key
 def unequip_item_slot(x, y):
     smooth_move(x, y)
     pyautogui.doubleClick()
 
 
+@skipped_by_escape_key
 def maybe_get_rid_of_discard_item_dialog():
     pyautogui.press("enter")
 
 
+@skipped_by_escape_key
 def search_for(text):
     pyautogui.write(text, interval=get_type_interval())
     pyautogui.press("enter")
 
 
+@skipped_by_escape_key
 def buy_and_assign_first_item_to_selected_slot(x, y):
     smooth_move(x, y)
     pyautogui.doubleClick()
 
 
+@skipped_by_escape_key
 def equip_loadout(loadout: dict, ui_coordinates: dict) -> None:
     for item_slot_index in FRONTEND_LOADOUT_ITEM_SLOT_KEYS:
         equip_loadout_item_slot(loadout, item_slot_index, ui_coordinates)
 
 
+@skipped_by_escape_key
 def equip_loadout_item_slot(
     loadout: dict, item_slot_index: str, ui_coordinates: dict
 ) -> None:

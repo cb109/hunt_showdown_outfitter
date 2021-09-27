@@ -29,6 +29,13 @@ this.busy = False
 
 
 def busy_locked(func):
+    """Skip function call when module state indicates 'already busy'.
+
+    Also toggles the state during function call. Use as a function
+    decorator.
+
+    """
+
     def inner(*args, **kwargs):
         if this.busy:
             return
