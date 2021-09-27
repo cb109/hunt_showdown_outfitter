@@ -114,7 +114,7 @@ def unequip_item_slot(x, y):
     pyautogui.doubleClick()
 
 
-def maybe_get_rid_of_discard_item_dialog(x, y):
+def maybe_get_rid_of_discard_item_dialog():
     pyautogui.press("enter")
 
 
