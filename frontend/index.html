@@ -309,6 +309,7 @@
                         :key="'loadout-' + loadoutIndex"
                         title="Edit this Loadout"
                         @click="modifyLoadout(loadout)"
+                        @dblclick="equipLoadout(loadout)"
                       >
                         <v-list-item-content>
                           <v-list-item-title
