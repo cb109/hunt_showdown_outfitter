@@ -312,7 +312,7 @@
                       >
                         <v-list-item-content>
                           <v-list-item-title
-                            :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
+                            :class="{'primary--text font-weight-bold': editing.loadout && editing.loadout.id == loadout.id}"
                           >
                             {{ loadout.label }}
                           </v-list-item-title>
@@ -323,7 +323,7 @@
                           </v-list-item-subtitle>
                         </v-list-item-content>
                         <div
-                          v-if="hover || (editing.loadout && editing.loadout.id == loadout.id)"
+                          v-if="hover"
                           class="d-flex"
                         >
                           <v-btn
