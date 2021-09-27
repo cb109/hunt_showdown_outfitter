@@ -7,15 +7,12 @@ import platform
 
 from hunt_showdown_outfitter import api  # This exposes the eel functions.
 
-__version__ = "0.5.0"
-
 
 def open_gui():
     page = "index.html"
     eel_kwargs = {
         "size": (1280, 900),
         "port": 8066,
-        "title": __version__,
     }
 
     eel.init("frontend")

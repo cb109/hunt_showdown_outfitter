@@ -761,6 +761,12 @@
           },
         },
         mounted() {
+          this.getVersion()((version) => {
+            if (version) {
+              document.title += ' v' + version;
+            }
+          });
+
           this.loading = true;
           eel.load_data_from_last_filepath_in_userdir()((lastFilepath) => {
             if (!!lastFilepath) {
@@ -772,6 +778,9 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          getVersion() {
+            return eel.get_version();
+          },
           resetCurrentFilepath() {
             this.currentFilepath = null;
             eel.forget_last_filepath();

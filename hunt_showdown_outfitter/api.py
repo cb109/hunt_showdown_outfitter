@@ -14,6 +14,7 @@ import eel
 import pyautogui
 from PIL import ImageDraw, ImageFont
 
+from hunt_showdown_outfitter import __version__
 from hunt_showdown_outfitter import ui_automation
 from hunt_showdown_outfitter.constants import ALL_UI_COORDINATE_KEYS
 from hunt_showdown_outfitter.constants import COLOR_GREEN
@@ -257,3 +258,9 @@ def open_git_hub_page_in_default_browser():
 @eel.expose()
 def forget_last_filepath():
     ui_automation.save_last_filepath_to_userdir("")
+
+
+@busy_locked
+@eel.expose()
+def get_version():
+    return __version__
