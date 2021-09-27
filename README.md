@@ -11,7 +11,7 @@ preconfigured UI coordinates.
 
 - This software is a personal project and in no way affiliated with Crytek or the game itself.
 - I am just so annoyed by equipping my hunters with the same loadouts all over again that I created this.
-- **Attention**: The automation of keyboard/mouse input when using this tool can get you banned by the anti-cheat system. You have been warned.
+- **Attention**: The automation of mouse/keyboard input when using this tool **may get you banned** by the anti-cheat system. You have been warned.
 
 ## How to use
 
