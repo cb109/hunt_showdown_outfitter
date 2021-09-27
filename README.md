@@ -80,9 +80,14 @@ pip install -r requirements.txt
 python main.py
 ```
 
+### Compile list of high level dependencies
+```bash
+pip install pip-tools
+pip-compile
+```
+
 ### Build single file .exe
 
 ```bash
-pip install pyinstaller
 python -m eel --onefile --noconsole main.py frontend --icon build.ico
 ```
