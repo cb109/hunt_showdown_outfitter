@@ -51,14 +51,12 @@ Read the disclaimer above!
 
 ## Commandline Interface
 
-You can run the tool in a shell (e.g. cmd.exe) with the `--no-gui` flag and pass a file and loadout to equip. Helps to bind certain loadouts to a hotkey for example.
+You can run the tool headless in a shell (e.g. cmd.exe) pass a file and loadout to equip. Helps to bind certain loadouts to a hotkey, for example.
 
 ```
 Usage: hunt_showdown_outfitter.exe [OPTIONS]
 
 Options:
-  --no-gui               Enables the commandline interface instead of opening
-                         the GUI
   -f, --input-file TEXT  File containing loadouts and settings (.json)
   -l, --loadout TEXT     Loadout to equip (matched by ID or name)
   --help                 Show this message and exit.
@@ -67,7 +65,7 @@ Options:
 Example:
 
 ```
-> hunt_showdown_outfitter.exe --no-gui -f my_loadouts.json -l "Vetterli + Hand Crossbow"
+> hunt_showdown_outfitter.exe -f my_loadouts.json -l "Vetterli + Hand Crossbow"
 ```
 
 ## Helpful Things to know

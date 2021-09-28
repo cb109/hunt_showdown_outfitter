@@ -52,16 +52,12 @@ def equip_loadout_from_cli_args(input_file, loadout):
         print("No matching loadout found")
         return
 
+    print(f"Equipping: {loadout['label']}")
     ui_coordinates = file_data["settings"]["uiCoordinates"]
     ui_automation.equip_loadout(loadout, ui_coordinates)
 
 
 @click.command()
-@click.option(
-    "--no-gui",
-    is_flag=True,
-    help="Enables the commandline interface instead of opening the GUI",
-)
 @click.option(
     "-f",
     "--input-file",
@@ -74,14 +70,11 @@ def equip_loadout_from_cli_args(input_file, loadout):
     default=None,
     help="Loadout to equip (matched by ID or name)",
 )
-def cli(no_gui, input_file, loadout):
-    if not no_gui:
-        return open_gui()
-
-    if not (input_file and loadout):
-        print("You must pass both --input-file and --loadout arguments, see --help")
-        return
-    equip_loadout_from_cli_args(input_file, loadout)
+def cli(input_file, loadout):
+    if input_file and loadout:
+        equip_loadout_from_cli_args(input_file, loadout)
+    else:
+        open_gui()
 
 
 if __name__ == "__main__":
