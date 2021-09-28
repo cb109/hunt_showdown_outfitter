@@ -52,8 +52,12 @@ def equip_loadout_from_cli_args(input_file, loadout):
         print("No matching loadout found")
         return
 
-    print(f"Equipping: {loadout['label']}")
+    if not ui_automation.set_hunt_showdown_as_foreground_window():
+        print("Hunt is not running")
+        return
+
     ui_coordinates = file_data["settings"]["uiCoordinates"]
+    print(f"Equipping: {loadout['label']}")
     ui_automation.equip_loadout(loadout, ui_coordinates)
 
 
