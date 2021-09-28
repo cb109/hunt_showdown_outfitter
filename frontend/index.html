@@ -297,9 +297,39 @@
               >
                 <v-row align="center" class="mt-3 mb-4">
                   <h2>Loadouts</h2>
+                  <!-- Search -->
+                  <div class="d-flex flex-nowrap">
+                    <v-btn
+                      v-if="!showSearch"
+                      text
+                      rounded
+                      class="ml-3 grey--text text--darken-1"
+                      title="Search Loadouts"
+                      @click="onShowSearchButtonClicked()"
+                    >
+                      <v-icon left>mdi-magnify</v-icon> Search
+                    </v-btn>
+                    <v-text-field
+                      v-if="showSearch"
+                      ref="search"
+                      v-model="searchText"
+                      class="pt-0 ml-4"
+                      hide-details
+                      placeholder="Search"
+                      :label="!searchText ? '' : filteredLoadouts.length + '/' + loadouts.length"
+                      prepend-inner-icon="mdi-magnify"
+                      clearable
+                      @click:clear="resetSearch()"
+                      @keyup.esc="resetSearch()"
+                      @blur="searchText == '' ? resetSearch() : null"
+                    ></v-text-field>
+                  </div>
                   <v-spacer></v-spacer>
+                  <!-- Add Loadout -->
                   <v-btn
+                    v-if="!showSearch"
                     text
+                    rounded
                     color="primary"
                     @click="addNewLoadout()"
                   >
@@ -307,7 +337,7 @@
                   </v-btn>
                 </v-row>
                 <v-list>
-                  <template v-for="(loadout, loadoutIndex) in sortedLoadouts">
+                  <template v-for="(loadout, loadoutIndex) in filteredSortedLoadouts">
                     <v-hover v-slot="{hover}">
                       <v-list-item
                         :key="'loadout-' + loadoutIndex"
@@ -358,7 +388,7 @@
                       </v-list-item>
                     </v-hover>
                     <v-divider
-                      v-if="loadoutIndex < loadouts.length - 1"
+                      v-if="loadoutIndex < filteredSortedLoadouts.length - 1"
                       :key="'divider-' + loadoutIndex"
                     ></v-divider>
                   </template>
@@ -667,6 +697,8 @@
         vuetify: new Vuetify(),
         data() {
           return {
+            showSearch: false,
+            searchText: '',
             currentFilepath: null,
             loading: false,
             estimate: {
@@ -756,13 +788,31 @@
             );
             return this.editing.loadout && validLabel;
           },
-          sortedLoadouts() {
+          filteredLoadouts() {
+            if (!this.showSearch || !this.searchText) {
+              return this.loadouts;
+            }
+
+            searchText = this.searchText.toLowerCase();
+
+            return this.loadouts.filter(loadout => {
+              const loadoutTerms = [loadout.label.toLowerCase()];
+              for (let i = 1; i <= 10; i++) {
+                const itemName = loadout[i];
+                if (itemName) {
+                  loadoutTerms.push(itemName.toLowerCase());
+                }
+              }
+              return loadoutTerms.some(term => term.indexOf(searchText) !== -1);
+            });
+          },
+          filteredSortedLoadouts() {
             function compareByLabel(a, b) {
               if (a.label > b.label) return 1;
               if (b.label > a.label) return -1;
               return 0;
             }
-            return this.loadouts.sort(compareByLabel);
+            return this.filteredLoadouts.sort(compareByLabel);
           },
         },
         mounted() {
@@ -783,6 +833,16 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          onShowSearchButtonClicked() {
+            this.showSearch = true;
+            this.$nextTick(() => {
+              this.$refs.search.focus();
+            });
+          },
+          resetSearch() {
+            this.showSearch = false;
+            this.searchText = '';
+          },
           getVersion() {
             return eel.get_version();
           },

@@ -33,7 +33,7 @@ Read the disclaimer above!
 
 ### Equipping a Loadout
 
-- Make sure `Hunt: Showdown` is running and is set to use `Window Mode: Fullscreen` (otherwise automation may fail).
+- Make sure `Hunt: Showdown` is running and is set to use `Window Mode: Fullscreen` (otherwise automation may fail). You mave have to restart the game if you had used a different Window Mode before.
 - Make sure that within `Hunt: Showdown` you are on the `Roster > Equipment` screen.
 - In the tool, equip a loadout via one of the buttons or by doubleclicking it in the list.
   - You can also equip single items of a loadout py shift-leftclicking its checkbox. This is mainly useful to debug the text you've written in the item field.
