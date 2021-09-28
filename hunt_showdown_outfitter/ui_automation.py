@@ -32,13 +32,13 @@ def get_screen_size() -> Tuple[int, int]:
 
 
 def get_move_time(
-    minimum: float = 0.05, maximum: float = 0.15, num_decimals: int = 2
+    minimum: float = 0.02, maximum: float = 0.1, num_decimals: int = 2
 ) -> float:
     return round(random.uniform(minimum, maximum), num_decimals)
 
 
 def get_type_interval(
-    minimum: float = 0.005, maximum: float = 0.025, num_decimals: int = 2
+    minimum: float = 0.002, maximum: float = 0.01, num_decimals: int = 2
 ) -> float:
     return round(random.uniform(minimum, maximum), num_decimals)
 
@@ -96,7 +96,7 @@ def put_hunt_showdown_window_to_background() -> bool:
 
 
 @skipped_by_escape_key
-def smooth_move(x, y, random_offset_up_to=10):
+def smooth_move(x, y, random_offset_up_to=5):
     x = int(x)
     y = int(y)
 
@@ -138,8 +138,9 @@ def unequip_item_slot(x, y):
 
 
 @skipped_by_escape_key
-def maybe_get_rid_of_discard_item_dialog():
-    pyautogui.press("enter")
+def maybe_get_rid_of_dialog(x, y):
+    smooth_move(x, y)
+    pyautogui.click()
 
 
 @skipped_by_escape_key
@@ -164,10 +165,14 @@ def equip_loadout(loadout: dict, ui_coordinates: dict) -> None:
 def equip_loadout_item_slot(
     loadout: dict, item_slot_index: str, ui_coordinates: dict
 ) -> None:
+    ui_discard_item_dialog_yes_button = ui_coordinates["discard_item_dialog_yes_button"]
     ui_first_item_in_list = ui_coordinates["first_item_in_list"]
+    ui_item = ui_coordinates[item_slot_index]
     ui_remove_filters_button = ui_coordinates["remove_filters_button"]
     ui_search_box = ui_coordinates["search_box"]
-    ui_item = ui_coordinates[item_slot_index]
+    ui_transaction_not_possible_dialog_ok_button = ui_coordinates[
+        "transaction_not_possible_dialog_ok_button"
+    ]
 
     exclude_item_slot = loadout.get("excludes", {}).get(item_slot_index, False)
     if exclude_item_slot:
@@ -175,7 +180,9 @@ def equip_loadout_item_slot(
 
     select_item_slot(ui_item["x"], ui_item["y"])
     unequip_item_slot(ui_item["x"], ui_item["y"])
-    maybe_get_rid_of_discard_item_dialog()
+    maybe_get_rid_of_dialog(
+        ui_discard_item_dialog_yes_button["x"], ui_discard_item_dialog_yes_button["y"]
+    )
 
     item_name = loadout[item_slot_index]
     if not item_name:
@@ -187,4 +194,8 @@ def equip_loadout_item_slot(
 
     buy_and_assign_first_item_to_selected_slot(
         ui_first_item_in_list["x"], ui_first_item_in_list["y"]
+    )
+    maybe_get_rid_of_dialog(
+        ui_transaction_not_possible_dialog_ok_button["x"],
+        ui_transaction_not_possible_dialog_ok_button["y"],
     )

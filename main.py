@@ -11,7 +11,7 @@ from hunt_showdown_outfitter import api  # This exposes the eel functions.
 def open_gui():
     page = "index.html"
     eel_kwargs = {
-        "size": (1280, 900),
+        "size": (1280, 800),
         "port": 8066,
     }
 

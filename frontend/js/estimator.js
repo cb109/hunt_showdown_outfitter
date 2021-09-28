@@ -36,7 +36,8 @@ const uiCoordinatesEstimator = {
     'search_box': {'x': '870', 'y': '230'},
     'first_item_in_list': {'x': '985', 'y': '310'},
     'remove_filters_button': {'x': '1660', 'y': '225'},
-    // 'discard_item_dialog_yes_button': {'x': '1111', 'y': '732'},
+    'discard_item_dialog_yes_button': {'x': '1111', 'y': '728'},
+    'transaction_not_possible_dialog_ok_button': {'x': '1290', 'y': '752'},
   },
   estimate: function(width, height) {
     const estimatedUiCoordinates = {};

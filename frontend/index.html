@@ -202,7 +202,7 @@
                   </v-dialog>
                 </div>
                 <v-row
-                  v-for="(block, blockIndex) in editing.settings.uiCoordinatesBlocks"
+                  v-for="(block, blockIndex) in uiCoordinatesBlocks"
                   :key="'block-' + blockIndex"
                 >
                   <v-col
@@ -706,14 +706,20 @@
               width: 1920,
               height: 1080,
             },
+            uiCoordinatesBlocks: [
+              {'slots': [1]},
+              {'slots': [2]},
+              {'slots': [3, 4, 5, 6]},
+              {'slots': [7, 8, 9, 10]},
+              {'slots': [
+                'search_box',
+                'remove_filters_button',
+                'first_item_in_list',
+                'discard_item_dialog_yes_button',
+                'transaction_not_possible_dialog_ok_button',
+              ]},
+            ],
             settings: {
-              uiCoordinatesBlocks: [
-                {'slots': [1]},
-                {'slots': [2]},
-                {'slots': [3, 4, 5, 6]},
-                {'slots': [7, 8, 9, 10]},
-                {'slots': ['search_box', 'remove_filters_button', 'first_item_in_list']},
-              ],
               uiCoordinates: deepCopy(uiCoordinatesEstimator.sampleUiCoordinates),
             },
             snackbar: {
@@ -740,6 +746,8 @@
               'search_box': 'Search equipment field',
               'remove_filters_button': 'Remove equipment filters button',
               'first_item_in_list': 'First item in equipment list',
+              'discard_item_dialog_yes_button': '"Discard item" dialog yes button',
+              'transaction_not_possible_dialog_ok_button': '"Transaction not possible" dialog ok button',
             },
             loadouts: [
               DEFAULT_LOADOUT,
@@ -752,19 +760,10 @@
         },
         computed: {
           fileData() {
-            const migratedLoadouts = this.loadouts.slice();
-
-            // Add .excludes attribute if needed.
-            for (let i = 0; i < migratedLoadouts.length; i++) {
-              if (migratedLoadouts[i].excludes === undefined) {
-                migratedLoadouts[i].excludes = {};
-              }
-            }
-
             return {
               version: 1,
-              loadouts: migratedLoadouts,
-              settings: this.settings,
+              loadouts: deepCopy(this.loadouts),
+              settings: deepCopy(this.settings),
             };
           },
           canSaveEditing() {
@@ -833,6 +832,34 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          migrateSettings(settings) {
+            const migratedSettings = deepCopy(settings);
+
+            // No longer storing uiCoordinatesBlocks in settings.
+            if (migratedSettings.uiCoordinatesBlocks) {
+              console.log('[MIGRATE] Removing settings.uiCoordinatesBlocks');
+              delete migratedSettings.uiCoordinatesBlocks
+            }
+
+            // Some UIelements have been added later.
+            const uiNames = [
+              'discard_item_dialog_yes_button',
+              'transaction_not_possible_dialog_ok_button',
+            ];
+            for (const uiName of uiNames) {
+              if (!migratedSettings.uiCoordinates[uiName]) {
+                console.log(
+                  '[MIGRATE] Adding settings.uiCoordinates.' + uiName
+                );
+                estimatedUiCoordinates = uiCoordinatesEstimator.estimate(
+                  this.estimate.width, this.estimate.height
+                );
+                migratedSettings.uiCoordinates[uiName] = estimatedUiCoordinates[uiName];
+              }
+            }
+
+            return migratedSettings;
+          },
           onShowSearchButtonClicked() {
             this.showSearch = true;
             this.$nextTick(() => {
@@ -958,12 +985,14 @@
           },
           loadFileData(data) {
             this.loadouts = data.loadouts;
+
             if (this.editing.loadout) {
               this.cancelEditingLoadout();
             }
 
             if (data.settings) {
-              this.settings = data.settings;
+              this.settings = this.migrateSettings(data.settings);
+
               if (this.editing.settings) {
                 this.editSettings();
               }

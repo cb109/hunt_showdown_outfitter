@@ -14,6 +14,8 @@ ALL_UI_COORDINATE_KEYS = [
     "search_box",
     "remove_filters_button",
     "first_item_in_list",
+    "discard_item_dialog_yes_button",
+    "transaction_not_possible_dialog_ok_button",
 ]
 
 GITHUB_PAGE = "https://github.com/cb109/hunt_showdown_outfitter"
