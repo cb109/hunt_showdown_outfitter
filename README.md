@@ -49,6 +49,27 @@ Read the disclaimer above!
 
 ![](docs/ui_loadouts.png)
 
+## Commandline Interface
+
+You can run the tool in a shell (e.g. cmd.exe) with the `--no-gui` flag and pass a file and loadout to equip. Helps to bind certain loadouts to a hotkey for example.
+
+```
+Usage: hunt_showdown_outfitter.exe [OPTIONS]
+
+Options:
+  --no-gui               Enables the commandline interface instead of opening
+                         the GUI
+  -f, --input-file TEXT  File containing loadouts and settings (.json)
+  -l, --loadout TEXT     Loadout to equip (matched by ID or name)
+  --help                 Show this message and exit.
+```
+
+Example:
+
+```
+> hunt_showdown_outfitter.exe --no-gui -f my_loadouts.json -l "Vetterli + Hand Crossbow"
+```
+
 ## Helpful Things to know
 
 - A great tool to figure out coordinates visually is using [Greenshot](https://getgreenshot.org/) and its "Capture region" function which will display x/y pixel coordinates as you go.
