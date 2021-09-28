@@ -14,6 +14,10 @@ bottle-websocket==0.2.9
     # via eel
 cffi==1.14.6
     # via gevent
+click==8.0.1
+    # via -r requirements.in
+colorama==0.4.4
+    # via click
 eel==0.14.0
     # via -r requirements.in
 future==0.18.2
@@ -27,7 +31,9 @@ gevent-websocket==0.10.1
 greenlet==1.1.1
     # via gevent
 importlib-metadata==4.8.1
-    # via pyinstaller
+    # via
+    #   click
+    #   pyinstaller
 keyboard==0.13.5
     # via -r requirements.in
 mouseinfo==0.1.3
