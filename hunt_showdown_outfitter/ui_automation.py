@@ -32,13 +32,13 @@ def get_screen_size() -> Tuple[int, int]:
 
 
 def get_move_time(
-    minimum: float = 0.02, maximum: float = 0.1, num_decimals: int = 2
+    minimum: float = 0.05, maximum: float = 0.15, num_decimals: int = 2
 ) -> float:
     return round(random.uniform(minimum, maximum), num_decimals)
 
 
 def get_type_interval(
-    minimum: float = 0.002, maximum: float = 0.01, num_decimals: int = 2
+    minimum: float = 0.005, maximum: float = 0.015, num_decimals: int = 2
 ) -> float:
     return round(random.uniform(minimum, maximum), num_decimals)
 
