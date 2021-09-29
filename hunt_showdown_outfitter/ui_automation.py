@@ -14,12 +14,19 @@ from hunt_showdown_outfitter.constants import GAME_WINDOW_TITLE
 from hunt_showdown_outfitter.constants import MEMORY_FILENAME
 
 
-def get_userdir_memory_filepath():
+def is_capslock_active() -> bool:
+    # https://stackoverflow.com/a/21160382
+    VK_CAPITAL = 0x14
+    user32 = ctypes.windll.user32
+    return user32.GetKeyState(VK_CAPITAL) == 1
+
+
+def get_userdir_memory_filepath() -> str:
     home = os.path.expanduser("~")
     return os.path.join(home, MEMORY_FILENAME)
 
 
-def save_last_filepath_to_userdir(filepath):
+def save_last_filepath_to_userdir(filepath) -> str:
     memory_filepath = get_userdir_memory_filepath()
     data = {"last_filepath": filepath}
     with open(memory_filepath, "w") as f:
@@ -32,13 +39,13 @@ def get_screen_size() -> Tuple[int, int]:
 
 
 def get_move_time(
-    minimum: float = 0.05, maximum: float = 0.15, num_decimals: int = 2
+    minimum: float = 0.08, maximum: float = 0.13, num_decimals: int = 2
 ) -> float:
     return round(random.uniform(minimum, maximum), num_decimals)
 
 
 def get_type_interval(
-    minimum: float = 0.005, maximum: float = 0.015, num_decimals: int = 2
+    minimum: float = 0.005, maximum: float = 0.01, num_decimals: int = 2
 ) -> float:
     return round(random.uniform(minimum, maximum), num_decimals)
 
@@ -145,6 +152,8 @@ def maybe_get_rid_of_dialog(x, y):
 
 @skipped_by_escape_key
 def search_for(text):
+    if is_capslock_active():
+        pyautogui.keyUp("capslock")
     pyautogui.write(text, interval=get_type_interval())
     pyautogui.press("enter")
 
