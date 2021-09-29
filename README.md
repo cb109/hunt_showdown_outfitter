@@ -7,6 +7,8 @@ A tool to manage item presets for **Hunt: Showdown** and semi-automatically
 equip them in the game by automating mouse/keyboard input against
 preconfigured UI coordinates.
 
+I consider this a fun experiment, but hope that it will become obsolete when actual loadout presets will be included in the game itself.
+
 ## Use at your own Risk
 
 - This software is a personal project and in no way affiliated with Crytek or the game itself.
