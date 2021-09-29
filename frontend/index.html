@@ -434,166 +434,81 @@
                 </v-row>
                 <!-- Weapons -->
                 <div class="subtitle-2 mt-3 mb-3">Weapons</div>
-                <v-row dense>
+                <v-row
+                  v-for="weaponIndex of [1, 2]"
+                  :key="'weapon-row-' + weaponIndex"
+                  dense
+                >
                   <v-col>
-                    <v-text-field
+                    <v-autocomplete
                       v-if="editing.loadout"
-                      v-model="editing.loadout[1]"
-                      :label="itemSlotLabels[1]"
-                      hide-details
+                      v-model="editing.loadout[weaponIndex]"
+                      :items="allUniqueLoadoutItemNames"
+                      :label="itemSlotLabels[weaponIndex]"
+                      :title="tooltipItemSlot"
                       clearable
                       solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 1)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 1)"
-                      class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[1]}"
-                    />
-                  </v-col>
-                </v-row>
-                <v-row dense>
-                  <v-col>
-                    <v-text-field
-                      v-if="editing.loadout"
-                      v-model="editing.loadout[2]"
-                      :label="itemSlotLabels[2]"
                       hide-details
-                      clearable
-                      solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 2)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 2)"
+                      hide-no-data
                       class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[2]}"
-                    />
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[weaponIndex]}"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, weaponIndex)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, weaponIndex)"
+                    ></v-autocomplete>
                   </v-col>
                 </v-row>
                 <!-- Tools -->
                 <div class="subtitle-2 mt-3 mb-3">Tools</div>
                 <v-row dense>
-                  <v-col cols="12" md="6" xl="3">
-                    <v-text-field
+                  <v-col
+                    v-for="toolsIndex of [3, 4, 5, 6]"
+                    :key="'tools-col-' + toolsIndex"
+                    cols="12"
+                    md="6"
+                    xl="3"
+                  >
+                    <v-autocomplete
                       v-if="editing.loadout"
-                      v-model="editing.loadout[3]"
-                      :label="itemSlotLabels[3]"
-                      hide-details
+                      v-model="editing.loadout[toolsIndex]"
+                      :items="allUniqueLoadoutItemNames"
+                      :label="itemSlotLabels[toolsIndex]"
+                      :title="tooltipItemSlot"
                       clearable
                       solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 3)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 3)"
-                      class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[3]}"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="6" xl="3">
-                    <v-text-field
-                      v-if="editing.loadout"
-                      v-model="editing.loadout[4]"
-                      :label="itemSlotLabels[4]"
                       hide-details
-                      clearable
-                      solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 4)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 4)"
+                      hide-no-data
                       class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[4]}"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="6" xl="3">
-                    <v-text-field
-                      v-if="editing.loadout"
-                      v-model="editing.loadout[5]"
-                      :label="itemSlotLabels[5]"
-                      hide-details
-                      clearable
-                      solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 5)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 5)"
-                      class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[5]}"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="6" xl="3">
-                    <v-text-field
-                      v-if="editing.loadout"
-                      v-model="editing.loadout[6]"
-                      :label="itemSlotLabels[6]"
-                      hide-details
-                      clearable
-                      solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 6)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 6)"
-                      class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[6]}"
-                    />
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[toolsIndex]}"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, toolsIndex)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, toolsIndex)"
+                    ></v-autocomplete>
                   </v-col>
                 </v-row>
                 <!-- Consumables -->
                 <div class="subtitle-2 mt-3 mb-3">Consumables</div>
                 <v-row dense>
-                  <v-col cols="12" md="6" xl="3">
-                    <v-text-field
+                  <v-col
+                    v-for="consumablesIndex of [7, 8, 9, 10]"
+                    :key="'consumables-col-' + consumablesIndex"
+                    cols="12"
+                    md="6"
+                    xl="3"
+                  >
+                    <v-autocomplete
                       v-if="editing.loadout"
-                      v-model="editing.loadout[7]"
-                      :label="itemSlotLabels[7]"
-                      hide-details
+                      v-model="editing.loadout[consumablesIndex]"
+                      :items="allUniqueLoadoutItemNames"
+                      :label="itemSlotLabels[consumablesIndex]"
+                      :title="tooltipItemSlot"
                       clearable
                       solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 7)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 7)"
-                      class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[7]}"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="6" xl="3">
-                    <v-text-field
-                      v-if="editing.loadout"
-                      v-model="editing.loadout[8]"
-                      :label="itemSlotLabels[8]"
                       hide-details
-                      clearable
-                      solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 8)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 8)"
+                      hide-no-data
                       class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[8]}"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="6" xl="3">
-                    <v-text-field
-                      v-if="editing.loadout"
-                      v-model="editing.loadout[9]"
-                      :label="itemSlotLabels[9]"
-                      hide-details
-                      clearable
-                      solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 9)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 9)"
-                      class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[9]}"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="6" xl="3">
-                    <v-text-field
-                      v-if="editing.loadout"
-                      v-model="editing.loadout[10]"
-                      :label="itemSlotLabels[10]"
-                      hide-details
-                      clearable
-                      solo
-                      :title="tooltipItemSlot"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, 10)"
-                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, 10)"
-                      class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[10]}"
-                    />
+                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[consumablesIndex]}"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, consumablesIndex)"
+                      @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, consumablesIndex)"
+                    ></v-autocomplete>
                   </v-col>
                 </v-row>
                 <v-row
@@ -761,6 +676,18 @@
           };
         },
         computed: {
+          allUniqueLoadoutItemNames() {
+            const uniqueItemNames = new Set();
+            for (const loadout of this.loadouts) {
+              for (let i = 0; i <= 10; i++) {
+                const itemName = loadout[i];
+                if (itemName) {
+                  uniqueItemNames.add(itemName);
+                }
+              }
+            }
+            return Array.from(uniqueItemNames).sort();
+          },
           fileData() {
             return {
               version: 1,
