@@ -903,6 +903,12 @@
             if (!this.currentFilepath) {
               return;
             }
+            if (this.editing.settings) {
+              this.saveSettings();
+            }
+            if (this.editing.loadout) {
+              this.saveEditingLoadout();
+            }
             eel.save_to_file(this.fileData, this.currentFilepath);
           },
           exportToFile() {
