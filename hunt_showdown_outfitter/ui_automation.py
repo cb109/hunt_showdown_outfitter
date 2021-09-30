@@ -18,8 +18,7 @@ def is_capslock_active() -> bool:
     # https://stackoverflow.com/a/21160382
     VK_CAPITAL = 0x14
     user32 = ctypes.windll.user32
-    # https://stackoverflow.com/a/43728638
-    return user32.GetKeyState(VK_CAPITAL) > 1
+    return user32.GetKeyState(VK_CAPITAL) > 0
 
 
 def get_userdir_memory_filepath() -> str:
@@ -154,7 +153,7 @@ def maybe_get_rid_of_dialog(x, y):
 @skipped_by_escape_key
 def search_for(text):
     if is_capslock_active():
-        pyautogui.keyUp("capslock")
+        pyautogui.press("capslock")
     pyautogui.write(text, interval=get_type_interval())
     pyautogui.press("enter")
 
