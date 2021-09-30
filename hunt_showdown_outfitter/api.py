@@ -19,7 +19,7 @@ from hunt_showdown_outfitter import ui_automation
 from hunt_showdown_outfitter.constants import ALL_UI_COORDINATE_KEYS
 from hunt_showdown_outfitter.constants import COLOR_GREEN
 from hunt_showdown_outfitter.constants import EXPORT_FILE_WINDOW_TITLE
-from hunt_showdown_outfitter.constants import GITHUB_PAGE
+from hunt_showdown_outfitter.constants import GITHUB_RELEASES_PAGE
 from hunt_showdown_outfitter.constants import IMPORT_FILE_WINDOW_TITLE
 
 # We'll use module level state to avoid running more than one Hunt
@@ -258,7 +258,7 @@ def put_hunt_in_foreground_and_equip_loadout_item_slot(
 @busy_locked
 @eel.expose()
 def open_git_hub_page_in_default_browser():
-    webbrowser.open_new(GITHUB_PAGE)
+    webbrowser.open_new(GITHUB_RELEASES_PAGE)
 
 
 @busy_locked
