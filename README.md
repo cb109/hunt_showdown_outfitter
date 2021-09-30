@@ -17,7 +17,8 @@ I consider this a fun experiment, but hope that it will become obsolete when act
 
 ## How to use
 
-Read the disclaimer above!
+- Read the disclaimer above!
+- All equipping only works when on the `Roster > Equipment` page in game!
 
 ### Installation
 - Download the latest `hunt_showdown_outfitter.exe` [from this page](https://github.com/cb109/hunt_showdown_outfitter/releases) (you can find the files under the release **Assets**)
