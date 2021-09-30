@@ -18,7 +18,8 @@ def is_capslock_active() -> bool:
     # https://stackoverflow.com/a/21160382
     VK_CAPITAL = 0x14
     user32 = ctypes.windll.user32
-    return user32.GetKeyState(VK_CAPITAL) == 1
+    # https://stackoverflow.com/a/43728638
+    return user32.GetKeyState(VK_CAPITAL) > 1
 
 
 def get_userdir_memory_filepath() -> str:
