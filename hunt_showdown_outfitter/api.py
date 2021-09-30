@@ -68,6 +68,9 @@ def put_hunt_in_foreground_and_debug_ui_coordinates_in_screenshot(ui_coordinates
     font = ImageFont.truetype("arial.ttf", 24)
     drawing = ImageDraw.Draw(image)
 
+    # Origin
+    drawing.ellipse(((-3, -3), (3, 3)), fill=COLOR_GREEN)
+
     for key in ALL_UI_COORDINATE_KEYS:
         coords = ui_coordinates[key]
         x = int(coords["x"])
