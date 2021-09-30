@@ -188,11 +188,31 @@ def equip_loadout_item_slot(
     if exclude_item_slot:
         return
 
+    def _unequip(slot_index: str):
+        ui_item = ui_coordinates[slot_index]
+        unequip_item_slot(ui_item["x"], ui_item["y"])
+
+        maybe_get_rid_of_dialog(
+            ui_discard_item_dialog_yes_button["x"],
+            ui_discard_item_dialog_yes_button["y"],
+        )
+
     select_item_slot(ui_item["x"], ui_item["y"])
-    unequip_item_slot(ui_item["x"], ui_item["y"])
-    maybe_get_rid_of_dialog(
-        ui_discard_item_dialog_yes_button["x"], ui_discard_item_dialog_yes_button["y"]
-    )
+
+    # Special case: Equipping the primary (slot 1) gun may fail if slot
+    #   2 uses a medium/large weapon already. To workaround we unequip
+    #   both first here.
+    excludes = loadout.get("excludes", {})
+    equipping_primary = item_slot_index == "1"
+    both_weapons_will_be_equipped = "1" not in excludes and "2" not in excludes
+    if equipping_primary and both_weapons_will_be_equipped:
+        _unequip("2")
+        _unequip("1")
+    elif item_slot_index == "2":
+        if not both_weapons_will_be_equipped:
+            _unequip("2")
+    else:
+        _unequip(item_slot_index)
 
     item_name = loadout[item_slot_index]
     if not item_name:
