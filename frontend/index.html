@@ -440,7 +440,7 @@
                   dense
                 >
                   <v-col>
-                    <v-autocomplete
+                    <v-combobox
                       v-if="editing.loadout"
                       v-model="editing.loadout[weaponIndex]"
                       :items="allUniqueLoadoutItemNames"
@@ -450,11 +450,12 @@
                       solo
                       hide-details
                       hide-no-data
+                      auto-select-first
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[weaponIndex]}"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, weaponIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, weaponIndex)"
-                    ></v-autocomplete>
+                    ></v-combobox>
                   </v-col>
                 </v-row>
                 <!-- Tools -->
@@ -467,7 +468,7 @@
                     md="6"
                     xl="3"
                   >
-                    <v-autocomplete
+                    <v-combobox
                       v-if="editing.loadout"
                       v-model="editing.loadout[toolsIndex]"
                       :items="allUniqueLoadoutItemNames"
@@ -477,11 +478,12 @@
                       solo
                       hide-details
                       hide-no-data
+                      auto-select-first
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[toolsIndex]}"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, toolsIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, toolsIndex)"
-                    ></v-autocomplete>
+                    ></v-combobox>
                   </v-col>
                 </v-row>
                 <!-- Consumables -->
@@ -494,7 +496,7 @@
                     md="6"
                     xl="3"
                   >
-                    <v-autocomplete
+                    <v-combobox
                       v-if="editing.loadout"
                       v-model="editing.loadout[consumablesIndex]"
                       :items="allUniqueLoadoutItemNames"
@@ -504,11 +506,12 @@
                       solo
                       hide-details
                       hide-no-data
+                      auto-select-first
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[consumablesIndex]}"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, consumablesIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, consumablesIndex)"
-                    ></v-autocomplete>
+                    ></v-combobox>
                   </v-col>
                 </v-row>
                 <v-row
