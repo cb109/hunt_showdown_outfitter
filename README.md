@@ -15,9 +15,17 @@ I consider this a fun experiment, but hope that it will become obsolete when act
 - I am just so annoyed by equipping my hunters with the same loadouts all over again that I created this.
 - **Attention**: The automation of mouse/keyboard input when using this tool is similar to using a macro keyboard, which could be detected to gain an unfair advantage in the game. In short words, this could potentially **get you banned** by the EasyAntiCheat system. You have been warned.
 
-## Demo Video
+## Video of Outfitting in Game
 
 [![](https://i.imgur.com/CMkUppk.png)](https://streamable.com/s9qo17)
+
+## Screenshots of the Interface
+
+![](docs/ui_settings.png)
+
+---
+
+![](docs/ui_loadouts.png)
 
 ## How to use
 
@@ -47,14 +55,6 @@ I consider this a fun experiment, but hope that it will become obsolete when act
   - If you want to stop the equipment procedure (or started it while on the wrong screen in game) simply hold the `Esc` key.
   - An empty slot in the tool means the slot will be emptied in the game.
     - If the item checkbox is disabled the slot will be skipped (e.g. for loadouts that only define tools and consumables).
-
-## Screenshots of the Interface
-
-![](docs/ui_settings.png)
-
----
-
-![](docs/ui_loadouts.png)
 
 ## Commandline Interface
 
