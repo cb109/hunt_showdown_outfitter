@@ -3,7 +3,7 @@
 
 # Hunt: Showdown Outfitter
 
-A tool to manage item presets for **Hunt: Showdown** and semi-automatically
+A tool to manage loadout presets for **Hunt: Showdown** and semi-automatically
 equip them in the game by automating mouse/keyboard input against
 preconfigured UI coordinates.
 
