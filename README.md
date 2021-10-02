@@ -13,7 +13,11 @@ I consider this a fun experiment, but hope that it will become obsolete when act
 
 - This software is a personal project and in no way affiliated with Crytek or the game itself.
 - I am just so annoyed by equipping my hunters with the same loadouts all over again that I created this.
-- **Attention**: The automation of mouse/keyboard input when using this tool **may get you banned** by the anti-cheat system. You have been warned.
+- **Attention**: The automation of mouse/keyboard input when using this tool is similar to using a macro keyboard, which could be detected to gain an unfair advantage in the game. In short words, this could potentially **get you banned** by the EasyAntiCheat system. You have been warned.
+
+## Demo Video
+
+[![](https://i.imgur.com/CMkUppk.png)](https://streamable.com/s9qo17)
 
 ## How to use
 
