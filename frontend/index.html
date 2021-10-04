@@ -530,7 +530,8 @@
                       Cancel
                     </v-btn>
                     <v-btn
-                      color="primary"
+                      :depressed="!editingLayoutNeedsSaving"
+                      :class="[editingLayoutNeedsSaving ? 'primary' : 'grey lighten-4']"
                       rounded
                       :disabled="!canSaveEditing"
                       @click="saveEditingLoadout()"
@@ -569,11 +570,12 @@
     <script type="text/javascript" src="/eel.js"></script>
     <script type="text/javascript" src="/vendor/vue.2.6.14.min.js"></script>
     <script type="text/javascript" src="/vendor/vuetify.2.5.8.min.js"></script>
+    <script type="text/javascript" src="/vendor/lodash.4.17.21.min.js"></script>
     <script type="text/javascript" src="/js/utils.js"></script>
     <script type="text/javascript" src="/js/estimator.js"></script>
     <script>
 
-        const DEFAULT_LOADOUT = {
+      const DEFAULT_LOADOUT = {
         1: 'Romero',
         2: 'Pax',
         3: 'Knuckle Knife',
@@ -717,6 +719,21 @@
               noDuplicateLabel
             );
             return this.editing.loadout && validLabel;
+          },
+          editingLayoutNeedsSaving() {
+            if (!this.editing.loadout) {
+              return false;
+            }
+            const savedLoadoutIds = this.loadouts.map(loadout => loadout.id);
+            const unsaved = savedLoadoutIds.indexOf(this.editing.loadout.id) === -1;
+            if (unsaved) {
+              return true;
+            }
+
+            const original = this.loadouts.filter(
+              loadout => loadout.id === this.editing.loadout.id
+            )[0];
+            return !_.isEqual(original, this.editing.loadout);
           },
           filteredLoadouts() {
             if (!this.showSearch || !this.searchText) {
@@ -897,9 +914,9 @@
 
             // Holding alt will check/uncheck all.
             if (event.altKey) {
-              const newValue = !loadout.excludes[itemSlotIndex];
+              const excluded = !loadout.excludes[itemSlotIndex];
               for (let i = 1; i <= 10; i++) {
-                this.$set(loadout.excludes, i, newValue);
+                this.$set(loadout.excludes, i, excluded);
               }
             } else {
               // Check/uncheck just this slot.
@@ -1021,6 +1038,13 @@
             this.editing.loadout = deepCopy(duplicatedLoadout);
           },
           modifyLoadout(loadout) {
+            if (this.editing.loadout && this.editingLayoutNeedsSaving)  {
+              const confirmed = confirm('Current loadout has been modified. Save it?');
+              if (confirmed) {
+                this.saveEditingLoadout();
+              }
+            }
+
             this.editing.loadout = deepCopy(loadout);
           },
           askDeleteLoadout(loadout) {
