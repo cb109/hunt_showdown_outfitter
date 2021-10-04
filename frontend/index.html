@@ -894,9 +894,20 @@
             if (loadout.excludes === undefined) {
               this.$set(loadout, 'excludes', {});
             }
-            this.$set(
-              loadout.excludes, itemSlotIndex, !loadout.excludes[itemSlotIndex]
-            );
+
+            // Holding alt will check/uncheck all.
+            if (event.altKey) {
+              const newValue = !loadout.excludes[itemSlotIndex];
+              for (let i = 1; i <= 10; i++) {
+                this.$set(loadout.excludes, i, newValue);
+              }
+            } else {
+              // Check/uncheck just this slot.
+              this.$set(
+                loadout.excludes, itemSlotIndex, !loadout.excludes[itemSlotIndex]
+              );
+            }
+
           },
           saveToCurrentFile() {
             if (!this.currentFilepath) {
