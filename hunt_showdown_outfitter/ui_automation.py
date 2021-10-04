@@ -2,7 +2,7 @@ import ctypes
 import json
 import os
 import random
-from typing import Tuple
+from typing import Tuple, Optional, Union
 
 import eel
 import keyboard
@@ -103,7 +103,13 @@ def put_hunt_showdown_window_to_background() -> bool:
 
 
 @skipped_by_escape_key
-def smooth_move(x, y, random_offset_up_to=0):
+def smooth_move(
+    x: Union[str, int],
+    y: Union[str, int],
+    random_offset_up_to: int = 0,
+    seconds: Optional[float] = None,
+    tween: bool = False,
+):
     x = int(x)
     y = int(y)
 
@@ -112,11 +118,18 @@ def smooth_move(x, y, random_offset_up_to=0):
         offset_x = random.randint(-random_offset_up_to, random_offset_up_to)
         offset_y = random.randint(-random_offset_up_to, random_offset_up_to)
 
+    if not seconds:
+        seconds = get_move_time()
+
+    extra = []
+    if tween:
+        extra = [pyautogui.easeOutQuad]
+
     pyautogui.moveTo(
         x + offset_x,
         y + offset_y,
-        get_move_time(),
-        # pyautogui.easeOutQuad,
+        seconds,
+        *extra,
     )
 
 

@@ -274,3 +274,9 @@ def forget_last_filepath():
 @eel.expose()
 def get_version():
     return __version__
+
+
+@busy_locked
+@eel.expose()
+def move_mouse_to(x: int, y: int):
+    return ui_automation.smooth_move(x, y, seconds=0.5, tween=True)

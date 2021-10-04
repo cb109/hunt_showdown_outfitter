@@ -164,7 +164,7 @@
                             label="Screen Width"
                             suffix="px"
                             hide-details
-                            ></v-text-field>
+                          ></v-text-field>
                           <v-text-field
                             v-model="estimate.height"
                             type="number"
@@ -209,8 +209,20 @@
                     :key="'block-item-slot-' + itemSlotIndex"
                     cols="auto"
                   >
-                    <div class="caption mb-2">
-                      {{ itemSlotLabels[itemSlotIndex] }}
+                    <div class="d-flex align-baseline">
+                      <div class="caption mb-2">
+                        {{ itemSlotLabels[itemSlotIndex] }}
+                      </div>
+                      <v-btn
+                        small
+                        text
+                        plain
+                        color="grey"
+                        class="my-0 ml-auto mr-0"
+                        @click="moveMouseTo(editing.settings.uiCoordinates[itemSlotIndex].x, editing.settings.uiCoordinates[itemSlotIndex].y)"
+                      >
+                        Move Mouse
+                      </v-btn>
                     </div>
                     <div class="d-flex">
                       <v-text-field
@@ -780,6 +792,9 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          moveMouseTo(x, y) {
+            eel.move_mouse_to(x, y);
+          },
           migrateSettings(settings) {
             const migratedSettings = deepCopy(settings);
 
