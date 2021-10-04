@@ -17,7 +17,7 @@ I have reached out to the official Crytek support at www.huntshowdown.com and as
 
   ![](docs/support_answer.png)
 
-Phew, that's a relief. I can give no guarantees though (maybe they change their stance on this in the future), so **use at your own risk**.
+Phew, that's a relief! I can give no guarantees though (maybe they change their stance on this in the future), so **use at your own risk**.
 
 
 ## Video of Outfitting in Game
