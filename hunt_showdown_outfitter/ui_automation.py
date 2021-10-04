@@ -39,13 +39,13 @@ def get_screen_size() -> Tuple[int, int]:
 
 
 def get_move_time(
-    minimum: float = 0.08, maximum: float = 0.13, num_decimals: int = 2
+    minimum: float = 0.0, maximum: float = 0.0, num_decimals: int = 2
 ) -> float:
     return round(random.uniform(minimum, maximum), num_decimals)
 
 
 def get_type_interval(
-    minimum: float = 0.005, maximum: float = 0.01, num_decimals: int = 2
+    minimum: float = 0.0, maximum: float = 0.0, num_decimals: int = 2
 ) -> float:
     return round(random.uniform(minimum, maximum), num_decimals)
 
@@ -103,7 +103,7 @@ def put_hunt_showdown_window_to_background() -> bool:
 
 
 @skipped_by_escape_key
-def smooth_move(x, y, random_offset_up_to=5):
+def smooth_move(x, y, random_offset_up_to=0):
     x = int(x)
     y = int(y)
 
@@ -116,7 +116,7 @@ def smooth_move(x, y, random_offset_up_to=5):
         x + offset_x,
         y + offset_y,
         get_move_time(),
-        pyautogui.easeOutQuad,
+        # pyautogui.easeOutQuad,
     )
 
 
