@@ -9,11 +9,16 @@ preconfigured UI coordinates.
 
 I consider this a fun experiment, but hope that it will become obsolete when actual loadout presets will be included in the game itself.
 
-## Use at your own Risk
+This software is a personal project and in no way affiliated with Crytek or the game itself.
 
-- This software is a personal project and in no way affiliated with Crytek or the game itself.
-- I am just so annoyed by equipping my hunters with the same loadouts all over again that I created this.
-- **Attention**: The automation of mouse/keyboard input when using this tool is similar to using a macro keyboard, which could be detected to gain an unfair advantage in the game. In short words, this could potentially **get you banned** by the EasyAntiCheat system. You have been warned.
+## Won't this get me banned from Hunt?
+
+I have reached out to the official Crytek support at www.huntshowdown.com and asked about this specific software and input macros in general and have received the following response (October 2021):
+
+  ![](docs/support_answer.png)
+
+Phew, that's a relief. I can give no guarantees though (maybe they change their stance on this in the future), so **use at your own risk**.
+
 
 ## Video of Outfitting in Game
 
