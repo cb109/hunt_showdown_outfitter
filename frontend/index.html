@@ -314,11 +314,11 @@
                       v-if="!showSearch"
                       text
                       rounded
-                      class="ml-3 grey--text text--darken-1"
+                      class="ml-3 grey--text"
                       title="Search Loadouts"
                       @click="onShowSearchButtonClicked()"
                     >
-                      <v-icon left>mdi-magnify</v-icon> Search
+                      <v-icon left>mdi-magnify</v-icon> Search ({{ loadouts.length }})
                     </v-btn>
                     <v-text-field
                       v-if="showSearch"
@@ -355,6 +355,7 @@
                         @click="modifyLoadout(loadout)"
                         @dblclick="equipLoadout(loadout)"
                       >
+                        <!-- Toggle Favorite -->
                         <div v-if="hover || loadout.favorite">
                           <v-btn
                             small
@@ -381,6 +382,7 @@
                             {{ loadout[1] }}<span v-if="loadout[1]">, </span>{{ loadout[2] }}
                           </v-list-item-subtitle>
                         </v-list-item-content>
+                        <!-- Action Buttons -->
                         <div
                           v-if="hover"
                           class="d-flex"
@@ -780,8 +782,8 @@
           },
           filteredSortedLoadouts() {
             function compareByLabel(loadoutA, loadoutB) {
-              loadoutAText = String(loadoutA.favorite ? 0 : 1) + loadoutA.label;
-              loadoutBText = String(loadoutB.favorite ? 0 : 1) + loadoutB.label;
+              const loadoutAText = String(loadoutA.favorite ? 0 : 1) + loadoutA.label;
+              const loadoutBText = String(loadoutB.favorite ? 0 : 1) + loadoutB.label;
 
               if (loadoutAText > loadoutBText) return 1;
               if (loadoutBText > loadoutAText) return -1;
@@ -996,6 +998,7 @@
           },
           favoriteLoadout(loadout) {
             this.$set(loadout, 'favorite', !loadout.favorite);
+            this.saveLoadoutById(loadout, loadout.id);
           },
           equipLoadout(loadout) {
             this.showSnackbarText('Equipping "' + loadout.label + '"...');
@@ -1028,17 +1031,25 @@
           getNewId() {
             return this.getHighestId() + 1;
           },
+          saveLoadoutById(loadout, loadoutId) {
+            for (let index = 0; index < this.loadouts.length; index++) {
+              const loadout = this.loadouts[index];
+              if (loadout.id == loadoutId) {
+                this.loadouts[index] = deepCopy(loadout);
+                return true;
+              }
+            }
+            return false;
+          },
           saveEditingLoadout() {
             if (!this.editing.loadout) {
               return;
             }
-            for (let index = 0; index < this.loadouts.length; index++) {
-              const loadout = this.loadouts[index];
-              if (loadout.id == this.editing.loadout.id) {
-                this.loadouts[index] = deepCopy(this.editing.loadout);
-                this.showSnackbarText('Loadout saved');
-                return;
-              }
+            const saved = this.saveLoadoutById(
+              this.editing.loadout, this.editing.loadout.id
+            );
+            if (saved) {
+              this.showSnackbarText('Loadout saved');
             }
           },
           cancelEditingLoadout() {
