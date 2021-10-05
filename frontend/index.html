@@ -351,11 +351,24 @@
                   <template v-for="(loadout, loadoutIndex) in filteredSortedLoadouts">
                     <v-hover v-slot="{hover}">
                       <v-list-item
-                        :key="'loadout-' + loadoutIndex"
                         title="Edit this Loadout"
                         @click="modifyLoadout(loadout)"
                         @dblclick="equipLoadout(loadout)"
                       >
+                        <div v-if="hover || loadout.favorite">
+                          <v-btn
+                            small
+                            icon
+                            class="my-0 ml-0 mr-2"
+                            :class="{'primary--text': loadout.favorite}"
+                            title="Un/favorite this Loadout"
+                            @click.stop="favoriteLoadout(loadout)"
+                          >
+                            <v-icon small>
+                              {{ loadout.favorite ? 'mdi-heart' : 'mdi-heart-outline' }}
+                            </v-icon>
+                          </v-btn>
+                        </div>
                         <v-list-item-content>
                           <v-list-item-title
                             :class="{'primary--text font-weight-bold': editing.loadout && editing.loadout.id == loadout.id}"
@@ -766,9 +779,12 @@
             });
           },
           filteredSortedLoadouts() {
-            function compareByLabel(a, b) {
-              if (a.label > b.label) return 1;
-              if (b.label > a.label) return -1;
+            function compareByLabel(loadoutA, loadoutB) {
+              loadoutAText = String(loadoutA.favorite ? 0 : 1) + loadoutA.label;
+              loadoutBText = String(loadoutB.favorite ? 0 : 1) + loadoutB.label;
+
+              if (loadoutAText > loadoutBText) return 1;
+              if (loadoutBText > loadoutAText) return -1;
               return 0;
             }
             return this.filteredLoadouts.sort(compareByLabel);
@@ -977,6 +993,9 @@
                 this.editSettings();
               }
             }
+          },
+          favoriteLoadout(loadout) {
+            this.$set(loadout, 'favorite', !loadout.favorite);
           },
           equipLoadout(loadout) {
             this.showSnackbarText('Equipping "' + loadout.label + '"...');
