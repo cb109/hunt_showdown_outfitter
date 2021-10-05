@@ -351,9 +351,9 @@
                   <template v-for="(loadout, loadoutIndex) in filteredSortedLoadouts">
                     <v-hover v-slot="{hover}">
                       <v-list-item
+                        :key="'loadout-tile-' + loadoutIndex + loadout.id"
                         title="Edit this Loadout"
                         @click="modifyLoadout(loadout)"
-                        @dblclick="equipLoadout(loadout)"
                       >
                         <!-- Toggle Favorite -->
                         <div v-if="hover || loadout.favorite">
@@ -634,6 +634,7 @@
         excludes: {
           // 1: true,
         },
+        favorite: false,
         id: null,
         label: "A new loadout",
       };
@@ -781,15 +782,15 @@
             });
           },
           filteredSortedLoadouts() {
-            function compareByLabel(loadoutA, loadoutB) {
-              const loadoutAText = String(loadoutA.favorite ? 0 : 1) + loadoutA.label;
-              const loadoutBText = String(loadoutB.favorite ? 0 : 1) + loadoutB.label;
-
-              if (loadoutAText > loadoutBText) return 1;
-              if (loadoutBText > loadoutAText) return -1;
+            function compareLoadouts(loadoutA, loadoutB) {
+              const prefixA = loadoutA.favorite ? 'a_' : 'z_';
+              const prefixB = loadoutB.favorite ? 'a_' : 'z_';
+              if (prefixA + loadoutA.label > prefixB + loadoutB.label) return 1;
+              if (prefixB + loadoutB.label > prefixA + loadoutA.label) return -1;
               return 0;
             }
-            return this.filteredLoadouts.sort(compareByLabel);
+
+            return this.filteredLoadouts.sort(compareLoadouts);
           },
         },
         mounted() {
@@ -812,6 +813,17 @@
         methods: {
           moveMouseTo(x, y) {
             eel.move_mouse_to(x, y);
+          },
+          migrateLoadouts(loadouts) {
+            const migratedLoadouts = deepCopy(loadouts);
+            for (let i = 0; i < migratedLoadouts.length; i++) {
+              const loadout = migratedLoadouts[i];
+              if (loadout.favorite === undefined) {
+                console.log('[MIGRATE] Adding loadout.favorite', loadout);
+                this.$set(loadout, 'favorite', NEW_LOADOUT_TEMPLATE.favorite);
+              }
+            }
+            return migratedLoadouts;
           },
           migrateSettings(settings) {
             const migratedSettings = deepCopy(settings);
@@ -982,7 +994,7 @@
             });
           },
           loadFileData(data) {
-            this.loadouts = data.loadouts;
+            this.loadouts = this.migrateLoadouts(data.loadouts);
 
             if (this.editing.loadout) {
               this.cancelEditingLoadout();
@@ -1035,7 +1047,7 @@
             for (let index = 0; index < this.loadouts.length; index++) {
               const loadout = this.loadouts[index];
               if (loadout.id == loadoutId) {
-                this.loadouts[index] = deepCopy(loadout);
+                this.$set(loadouts, index, deepCopy(loadout));
                 return true;
               }
             }
