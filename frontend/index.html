@@ -374,7 +374,6 @@
                           <v-list-item-title
                             :class="{
                               'primary--text font-weight-bold': editing.loadout && editing.loadout.id == loadout.id,
-                              'orange--text text-darken-1': editing.loadout && editing.loadout.base == loadout.id,
                             }"
                           >
                             <v-icon
@@ -471,20 +470,26 @@
                 </v-row>
                 <!-- Base Loadout (optional) -->
                 <div
-                  class="subtitle-2 mt-3 mb-3 clickable"
+                  class="subtitle-2 mt-3 mb-3"
+                  :class="{'clickable': canDefineBaseForLoadout(editing.loadout)}"
                   title="Expand/collapse base loadout"
                   @click="editing.expandBaseLoadout = !editing.expandBaseLoadout"
                 >
-                  <span
-                    :class="{'orange--text text--darken-1': !!editing.loadout.base}"
-                  >Base (optional)</span>
-                  <v-icon>
+                  Base (optional)
+                  <v-icon v-if="canDefineBaseForLoadout(editing.loadout)">
                     {{ editing.expandBaseLoadout ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
                   </v-icon>
+                  <div
+                    v-else
+                    class="body-2 grey--text mt-2"
+                  >
+                    Because this loadout is used as a base in other loadouts,
+                    it can not have a base itself.
+                  </div>
                 </div>
                 <v-slide-y-transition>
                   <v-row
-                    v-if="editing.expandBaseLoadout"
+                    v-if="canDefineBaseForLoadout(editing.loadout) && editing.expandBaseLoadout"
                     class="mb-3"
                   >
                     <v-col>
@@ -863,6 +868,11 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          canDefineBaseForLoadout(loadout) {
+            const bases = this.loadouts.map(loadout => loadout.base);
+            const usedAsBase = bases.indexOf(loadout.id) !== -1;
+            return !usedAsBase;
+          },
           getEditingLabelItemLabel(itemSlotIndex) {
             if (this.editing.loadout && this.editing.loadout.base) {
               const item = this.editing.loadout[itemSlotIndex];
