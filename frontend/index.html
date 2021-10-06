@@ -1043,11 +1043,11 @@
           getNewId() {
             return this.getHighestId() + 1;
           },
-          saveLoadoutById(loadout, loadoutId) {
+          saveLoadoutById(loadoutToSave, loadoutId) {
             for (let index = 0; index < this.loadouts.length; index++) {
-              const loadout = this.loadouts[index];
-              if (loadout.id == loadoutId) {
-                this.$set(this.loadouts, index, deepCopy(loadout));
+              const storedLoadout = this.loadouts[index];
+              if (storedLoadout.id == loadoutId) {
+                this.$set(this.loadouts, index, deepCopy(loadoutToSave));
                 return true;
               }
             }
