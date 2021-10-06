@@ -353,7 +353,7 @@
                       <v-list-item
                         :key="'loadout-tile-' + loadoutIndex + loadout.id"
                         title="Edit this Loadout"
-                        @click="modifyLoadout(loadout)"
+                        @click="editLoadout(loadout)"
                       >
                         <!-- Toggle Favorite -->
                         <div v-if="hover || loadout.favorite">
@@ -372,14 +372,25 @@
                         </div>
                         <v-list-item-content @dblclick="equipLoadout(loadout)">
                           <v-list-item-title
-                            :class="{'primary--text font-weight-bold': editing.loadout && editing.loadout.id == loadout.id}"
+                            :class="{
+                              'primary--text font-weight-bold': editing.loadout && editing.loadout.id == loadout.id,
+                              'orange--text text-darken-1': editing.loadout && editing.loadout.base == loadout.id,
+                            }"
                           >
+                            <v-icon
+                              v-if="loadout.base"
+                              x-small
+                              color="grey"
+                              title="This loadout is based on another loadout"
+                            >
+                              mdi-link-variant
+                            </v-icon>
                             {{ loadout.label }}
                           </v-list-item-title>
                           <v-list-item-subtitle
                             :class="{'primary--text': editing.loadout && editing.loadout.id == loadout.id}"
                           >
-                            {{ loadout[1] }}<span v-if="loadout[1]">, </span>{{ loadout[2] }}
+                            {{ resolveLoadout(loadout)[1] }}<span v-if="resolveLoadout(loadout)[1]">, </span>{{ resolveLoadout(loadout)[2] }}
                           </v-list-item-subtitle>
                         </v-list-item-content>
                         <!-- Action Buttons -->
@@ -432,7 +443,7 @@
                   class="d-flex align-baseline justify-space-between mt-2 mb-2"
                 >
                   <div class="title">
-                      Name of Loadout
+                    Name of Loadout
                   </div>
                   <v-btn
                     text
@@ -455,9 +466,41 @@
                       clearable
                       class="pt-0 mb-2"
                       @click:clear="editing.loadout.label = ''"
-                    />
+                    ></v-text-field>
                   </v-col>
                 </v-row>
+                <!-- Base Loadout (optional) -->
+                <div
+                  class="subtitle-2 mt-3 mb-3 clickable"
+                  title="Expand/collapse base loadout"
+                  @click="editing.expandBaseLoadout = !editing.expandBaseLoadout"
+                >
+                  <span
+                    :class="{'orange--text text--darken-1': !!editing.loadout.base}"
+                  >Base (optional)</span>
+                  <v-icon>
+                    {{ editing.expandBaseLoadout ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                  </v-icon>
+                </div>
+                <v-slide-y-transition>
+                  <v-row
+                    v-if="editing.expandBaseLoadout"
+                    class="mb-3"
+                  >
+                    <v-col>
+                      <v-select
+                        v-model="editing.loadout.base"
+                        :items="sortedLoadoutsWithoutBase.filter(loadout => loadout.id != editing.loadout.id)"
+                        item-text="label"
+                        item-value="id"
+                        hide-details
+                        solo
+                        placeholder="Select a base loadout"
+                        clearable
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                </v-slide-y-transition>
                 <!-- Weapons -->
                 <div class="subtitle-2 mt-3 mb-3">Weapons</div>
                 <v-row
@@ -470,7 +513,7 @@
                       v-if="editing.loadout"
                       v-model="editing.loadout[weaponIndex]"
                       :items="allUniqueLoadoutItemNames"
-                      :label="itemSlotLabels[weaponIndex]"
+                      :label="getEditingLabelItemLabel(weaponIndex)"
                       :title="tooltipItemSlot"
                       clearable
                       solo
@@ -478,8 +521,11 @@
                       hide-no-data
                       auto-select-first
                       class="pt-0 mb-2"
-                      :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[weaponIndex]}"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, weaponIndex)"
+                      :class="{
+                        'muted': editing.loadout.excludes && editing.loadout.excludes[weaponIndex],
+                      }"
+                      :prepend-inner-icon="getLoadoutItemSlotPrependInnerIcon(weaponIndex)"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(weaponIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, weaponIndex)"
                     ></v-combobox>
                   </v-col>
@@ -498,7 +544,7 @@
                       v-if="editing.loadout"
                       v-model="editing.loadout[toolsIndex]"
                       :items="allUniqueLoadoutItemNames"
-                      :label="itemSlotLabels[toolsIndex]"
+                      :label="getEditingLabelItemLabel(toolsIndex)"
                       :title="tooltipItemSlot"
                       clearable
                       solo
@@ -507,7 +553,8 @@
                       auto-select-first
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[toolsIndex]}"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, toolsIndex)"
+                      :prepend-inner-icon="getLoadoutItemSlotPrependInnerIcon(toolsIndex)"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(toolsIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, toolsIndex)"
                     ></v-combobox>
                   </v-col>
@@ -526,7 +573,7 @@
                       v-if="editing.loadout"
                       v-model="editing.loadout[consumablesIndex]"
                       :items="allUniqueLoadoutItemNames"
-                      :label="itemSlotLabels[consumablesIndex]"
+                      :label="getEditingLabelItemLabel(consumablesIndex)"
                       :title="tooltipItemSlot"
                       clearable
                       solo
@@ -535,7 +582,8 @@
                       auto-select-first
                       class="pt-0 mb-2"
                       :class="{'muted': editing.loadout.excludes && editing.loadout.excludes[consumablesIndex]}"
-                      :prepend-icon="getLoadoutItemSlotPrependIcon(editing.loadout, consumablesIndex)"
+                      :prepend-inner-icon="getLoadoutItemSlotPrependInnerIcon(consumablesIndex)"
+                      :prepend-icon="getLoadoutItemSlotPrependIcon(consumablesIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, consumablesIndex)"
                     ></v-combobox>
                   </v-col>
@@ -631,6 +679,7 @@
         7: "",
         8: "",
         9: "",
+        base: null,  // ID of based loadout.
         excludes: {
           // 1: true,
         },
@@ -679,6 +728,8 @@
             },
             editing: {
               loadout: null,
+              resolvedLoadout: null,
+              expandBaseLoadout: false,
               settings: null,
             },
             itemSlotLabels: {
@@ -708,6 +759,12 @@
           };
         },
         computed: {
+          editingResolvedLoadout() {
+            if (!this.editing.loadout) {
+              return null;
+            }
+            return this.resolveLoadout(this.editing.loadout);
+          },
           allUniqueLoadoutItemNames() {
             const uniqueItemNames = new Set();
             for (const loadout of this.loadouts) {
@@ -782,15 +839,10 @@
             });
           },
           filteredSortedLoadouts() {
-            function compareLoadouts(loadoutA, loadoutB) {
-              const prefixA = loadoutA.favorite ? 'a_' : 'z_';
-              const prefixB = loadoutB.favorite ? 'a_' : 'z_';
-              if (prefixA + loadoutA.label > prefixB + loadoutB.label) return 1;
-              if (prefixB + loadoutB.label > prefixA + loadoutA.label) return -1;
-              return 0;
-            }
-
-            return this.filteredLoadouts.sort(compareLoadouts);
+            return this.filteredLoadouts.sort(this.compareLoadouts);
+          },
+          sortedLoadoutsWithoutBase() {
+            return this.loadouts.slice().filter(loadout => !loadout.base).sort(this.compareLoadouts);
           },
         },
         mounted() {
@@ -811,6 +863,28 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          getEditingLabelItemLabel(itemSlotIndex) {
+            if (this.editing.loadout && this.editing.loadout.base) {
+              const item = this.editing.loadout[itemSlotIndex];
+              const resolvedItem = this.editingResolvedLoadout[itemSlotIndex];
+              if (resolvedItem != item) {
+                return resolvedItem;
+              }
+            }
+            return this.itemSlotLabels[itemSlotIndex];
+          },
+          isItemSlotInheritedFromBaseLoadout(itemSlotIndex, loadout, resolvedLoadout) {
+            const item = loadout[itemSlotIndex];
+            const resolvedItem = resolvedLoadout[itemSlotIndex];
+            return resolvedItem !== item;
+          },
+          compareLoadouts(loadoutA, loadoutB) {
+            const prefixA = loadoutA.favorite ? 'a_' : 'z_';
+            const prefixB = loadoutB.favorite ? 'a_' : 'z_';
+            if (prefixA + loadoutA.label > prefixB + loadoutB.label) return 1;
+            if (prefixB + loadoutB.label > prefixA + loadoutA.label) return -1;
+            return 0;
+          },
           moveMouseTo(x, y) {
             eel.move_mouse_to(x, y);
           },
@@ -818,10 +892,17 @@
             const migratedLoadouts = deepCopy(loadouts);
             for (let i = 0; i < migratedLoadouts.length; i++) {
               const loadout = migratedLoadouts[i];
+
               if (loadout.favorite === undefined) {
                 console.log('[MIGRATE] Adding loadout.favorite', loadout);
                 this.$set(loadout, 'favorite', NEW_LOADOUT_TEMPLATE.favorite);
               }
+
+              if (loadout.base === undefined) {
+                console.log('[MIGRATE] Adding loadout.base', loadout);
+                this.$set(loadout, 'base', NEW_LOADOUT_TEMPLATE.base);
+              }
+
             }
             return migratedLoadouts;
           },
@@ -875,7 +956,7 @@
           },
           selectFirstLoadoutForEditing() {
             if (this.loadouts.length > 0) {
-              this.modifyLoadout(this.loadouts[0]);
+              this.editLoadout(this.loadouts[0]);
             }
           },
           setEstimationScreenSizeDefaults() {
@@ -940,8 +1021,23 @@
               this.editSettings();
             }
           },
-          getLoadoutItemSlotPrependIcon(loadout, itemSlotIndex) {
-            if (loadout.excludes === undefined || !loadout.excludes[itemSlotIndex]) {
+          getLoadoutItemSlotPrependInnerIcon(itemSlotIndex) {
+            if (
+              this.editing.loadout &&
+              this.isItemSlotInheritedFromBaseLoadout(
+                itemSlotIndex, this.editing.loadout, this.editingResolvedLoadout
+              )
+            ) {
+              return 'mdi-link-variant';
+            }
+            return null;
+          },
+          getLoadoutItemSlotPrependIcon(itemSlotIndex) {
+            if (
+              this.editing.loadout &&
+              this.editing.loadout.excludes === undefined ||
+              !this.editing.loadout.excludes[itemSlotIndex]
+            ) {
               return 'mdi-checkbox-marked';
             }
             return 'mdi-checkbox-blank-outline';
@@ -1014,8 +1110,10 @@
           },
           equipLoadout(loadout) {
             this.showSnackbarText('Equipping "' + loadout.label + '"...');
+
+            const resolvedLoadout = this.resolveLoadout(loadout);
             eel.put_hunt_in_foreground_and_equip_loadout(
-              loadout, this.settings.uiCoordinates
+              resolvedLoadout, this.settings.uiCoordinates
             );
           },
           equipLoadoutItemSlot(loadout, itemSlotIndex) {
@@ -1083,6 +1181,7 @@
             newLoadout.id = this.getNewId();
             this.loadouts.push(newLoadout);
             this.editing.loadout = deepCopy(newLoadout);
+            this.editing.expandBaseLoadout = true;
           },
           duplicateLoadout(loadout) {
             const duplicatedLoadout = deepCopy(loadout);
@@ -1094,7 +1193,7 @@
             this.loadouts.push(duplicatedLoadout);
             this.editing.loadout = deepCopy(duplicatedLoadout);
           },
-          modifyLoadout(loadout) {
+          editLoadout(loadout) {
             if (this.editing.loadout && this.editingLayoutNeedsSaving)  {
               const confirmed = confirm('Current loadout has been modified. Save it?');
               if (confirmed) {
@@ -1103,6 +1202,32 @@
             }
 
             this.editing.loadout = deepCopy(loadout);
+            this.editing.expandBaseLoadout = !!this.editing.loadout.base;
+          },
+          /**
+           * Resolve optional base loadout.
+           */
+          resolveLoadout(loadoutToResolve) {
+            if (!loadoutToResolve.base) {
+              return loadoutToResolve;
+            }
+            const base = deepCopy(
+              this.loadouts.filter(
+                loadout => loadout.id == loadoutToResolve.base
+              )[0] || {}
+            );
+
+            const top = deepCopy(loadoutToResolve);
+
+            // Remove empty slots from top loadout so base shines through.
+            for (let i = 1; i <= 10; i++) {
+              const item = top[i];
+              if (!item) {
+                delete top[i];
+              }
+            }
+
+            return {...base, ...top};
           },
           askDeleteLoadout(loadout) {
             const confirmed = confirm(

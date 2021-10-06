@@ -15,7 +15,7 @@ from hunt_showdown_outfitter import ui_automation
 def open_gui():
     page = "index.html"
     eel_kwargs = {
-        "size": (1280, 800),
+        "size": (1440, 1024),
         "port": 8066,
     }
 
