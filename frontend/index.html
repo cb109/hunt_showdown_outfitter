@@ -471,12 +471,12 @@
                 <!-- Base Loadout (optional) -->
                 <div
                   class="subtitle-2 mt-3 mb-3"
-                  :class="{'clickable': canDefineBaseForLoadout(editing.loadout)}"
+                  :class="{'clickable': editingLoadoutCanDefineBase}"
                   title="Expand/collapse base loadout"
                   @click="editing.expandBaseLoadout = !editing.expandBaseLoadout"
                 >
                   Base (optional)
-                  <v-icon v-if="canDefineBaseForLoadout(editing.loadout)">
+                  <v-icon v-if="editingLoadoutCanDefineBase">
                     {{ editing.expandBaseLoadout ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
                   </v-icon>
                   <div
@@ -489,7 +489,7 @@
                 </div>
                 <v-slide-y-transition>
                   <v-row
-                    v-if="canDefineBaseForLoadout(editing.loadout) && editing.expandBaseLoadout"
+                    v-if="editingLoadoutCanDefineBase && editing.expandBaseLoadout"
                     class="mb-3"
                   >
                     <v-col>
@@ -770,6 +770,14 @@
             }
             return this.resolveLoadout(this.editing.loadout);
           },
+          editingLoadoutCanDefineBase() {
+            if (!this.editing.loadout) {
+              return;
+            }
+            const bases = this.loadouts.map(loadout => loadout.base);
+            const usedAsBase = bases.indexOf(this.editing.loadout.id) !== -1;
+            return !usedAsBase;
+          },
           allUniqueLoadoutItemNames() {
             const uniqueItemNames = new Set();
             for (const loadout of this.loadouts) {
@@ -868,11 +876,6 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
-          canDefineBaseForLoadout(loadout) {
-            const bases = this.loadouts.map(loadout => loadout.base);
-            const usedAsBase = bases.indexOf(loadout.id) !== -1;
-            return !usedAsBase;
-          },
           getEditingLabelItemLabel(itemSlotIndex) {
             if (this.editing.loadout && this.editing.loadout.base) {
               const item = this.editing.loadout[itemSlotIndex];
