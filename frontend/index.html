@@ -1130,8 +1130,9 @@
             );
           },
           equipLoadoutItemSlot(loadout, itemSlotIndex) {
+            const resolvedLoadout = this.resolveLoadout(loadout);
             eel.put_hunt_in_foreground_and_equip_loadout_item_slot(
-              loadout, itemSlotIndex, this.settings.uiCoordinates
+              resolvedLoadout, itemSlotIndex, this.settings.uiCoordinates
             );
           },
           showSnackbarText(
