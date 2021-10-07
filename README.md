@@ -122,6 +122,12 @@ Download and install Python 3.7+
 pip install -r requirements.txt
 ```
 
+Download and install nodejs/npm then install electron like:
+
+```bash
+npm install
+```
+
 ### Run local instance
 ```bash
 python main.py
