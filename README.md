@@ -114,6 +114,8 @@ Example:
 
 ## Development
 
+Windows only for now, as we need Windows specific APIs.
+
 ### Prerequisites
 
 Download and install Python 3.7+
