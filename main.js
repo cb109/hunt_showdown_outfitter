@@ -1,3 +1,6 @@
+// For news about how to setup eel with electron see:
+// https://github.com/ChrisKnott/Eel/issues/57
+
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron');
 
