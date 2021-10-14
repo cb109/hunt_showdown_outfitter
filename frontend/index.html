@@ -532,6 +532,7 @@
                       :prepend-inner-icon="getLoadoutItemSlotPrependInnerIcon(weaponIndex)"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(weaponIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, weaponIndex)"
+                      @click:clear="editing.loadout[weaponIndex] = ''"
                     ></v-combobox>
                   </v-col>
                 </v-row>
@@ -561,7 +562,8 @@
                       :prepend-inner-icon="getLoadoutItemSlotPrependInnerIcon(toolsIndex)"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(toolsIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, toolsIndex)"
-                    ></v-combobox>
+                      @click:clear="editing.loadout[toolsIndex] = ''"
+                      ></v-combobox>
                   </v-col>
                 </v-row>
                 <!-- Consumables -->
@@ -590,7 +592,8 @@
                       :prepend-inner-icon="getLoadoutItemSlotPrependInnerIcon(consumablesIndex)"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(consumablesIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, consumablesIndex)"
-                    ></v-combobox>
+                      @click:clear="editing.loadout[consumablesIndex] = ''"
+                      ></v-combobox>
                   </v-col>
                 </v-row>
                 <v-row
@@ -888,7 +891,13 @@
           },
           isItemSlotInheritedFromBaseLoadout(itemSlotIndex, loadout, resolvedLoadout) {
             const item = loadout[itemSlotIndex];
-            const resolvedItem = resolvedLoadout[itemSlotIndex];
+            let resolvedItem = resolvedLoadout[itemSlotIndex];
+            if (resolvedItem === null && item == '') {
+              // Treat excludes from base loadout and empty slots in the
+              // actual loadout as 'not inheriting', since the base does
+              // not define something to inherit.
+              return false;
+            }
             return resolvedItem !== item;
           },
           compareLoadouts(loadoutA, loadoutB) {
