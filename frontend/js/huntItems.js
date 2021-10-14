@@ -48,6 +48,7 @@ const huntItems = {
     {category: 'weapons', name: 'Sparks LRR Silencer', size: 'large'},
     {category: 'weapons', name: 'Sparks LRR Sniper', size: 'large'},
     {category: 'weapons', name: 'Sparks LRR', size: 'large'},
+    {category: 'weapons', name: 'Sparks LRR', size: 'large', legendary: 'The Reckoning'},
     {category: 'weapons', name: 'Specter 1882 Bayonet', size: 'large'},
     {category: 'weapons', name: 'Specter 1882 Compact', size: 'medium'},
     {category: 'weapons', name: 'Specter 1882', size: 'large'},

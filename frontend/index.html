@@ -891,7 +891,9 @@
            * - Small and small
            */
           getValidWeaponNamesForSlot(weaponSlotIndex) {
-            const allWeaponNames = huntItems.weapons.map(weapon => weapon.name);
+            const allWeaponNames = huntItems.weapons.map(
+              weapon => weapon.legendary || weapon.name
+            );
 
             // weaponSlotIndex is either 1 or 2.
             const secondaryIndex = weaponSlotIndex == 1 ? 2 : 1;
@@ -901,7 +903,12 @@
             }
 
             const secondaryWeapon = huntItems.weapons.filter(
-              weapon => weapon.name == secondaryWeaponName
+              weapon => {
+                return (
+                  weapon.legendary == secondaryWeaponName ||
+                  weapon.name == secondaryWeaponName
+                );
+              }
             )[0];
             if (!secondaryWeapon) {
               return allWeaponNames;
@@ -910,12 +917,12 @@
             if (secondaryWeapon.size == 'large') {
               return huntItems.weapons
                 .filter(weapon => weapon.size == 'small')
-                .map(weapon => weapon.name);
+                .map(weapon => weapon.legendary || weapon.name);
             }
             else if (secondaryWeapon.size == 'medium') {
               return huntItems.weapons
                 .filter(weapon => ['small', 'medium'].includes(weapon.size))
-                .map(weapon => weapon.name);
+                .map(weapon => weapon.legendary || weapon.name);
             }
             // Small can be combined with anything.
             return allWeaponNames;
