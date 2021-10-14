@@ -107,9 +107,9 @@ Example:
 ## Known Issues
 
 - When the tool is opened it will auto-load the latest saved/opened file.  File handling is still pretty clunky: Settings and loadouts must each be saved individually, but the changes are only written to disk when you press the Save button in the top toolbar.
-- The tool has absolutely no idea about Hunt's item system or current game state, it just moves the mouse and clicks and types the text you specified. As a result, some situations can not be easily handled, e.g. trying to select the "Knife" will equip the Heavy Knife, as it always matches as first in  the list. Use a legendary skin with a more unique name instead.
-  - Why just text? Because I don't plan on maintaining item lists to match all future Hunt patches or available languages, too much work.
-- Special ammo is not yet supported.
+- The tool has absolutely no idea of the current game state, it just moves the mouse and clicks and types the text you specified. As a result, some situations can not be easily handled, e.g. trying to select the "Knife" will equip the Heavy Knife, as it always matches as first in  the list. Use a legendary skin with a more unique name instead.
+- Special ammo, dual wielding and stacked consumables are not yet supported.
+- Autocomplete is currently hardcoded for the english item names only.
 - Estimation may not work for your specific scenario: For now it is limited to using the native resolution of your screen. So far I have confirmed this works for 2560x1080 and 2560x1440. Let me know if you run into problems for other resolutions.
 
 ## Development

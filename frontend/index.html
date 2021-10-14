@@ -331,7 +331,7 @@
                       prepend-inner-icon="mdi-magnify"
                       clearable
                       @click:clear="resetSearch()"
-                      @keyup.esc="resetSearch()"
+                      @keydown.esc="resetSearch()"
                       @blur="searchText == '' ? resetSearch() : null"
                     ></v-text-field>
                   </div>
@@ -517,7 +517,7 @@
                     <v-combobox
                       v-if="editing.loadout"
                       v-model="editing.loadout[weaponIndex]"
-                      :items="allUniqueLoadoutItemNames"
+                      :items="getValidWeaponNamesForSlot(weaponIndex)"
                       :label="getEditingLabelItemLabel(weaponIndex)"
                       :title="tooltipItemSlot"
                       clearable
@@ -533,6 +533,7 @@
                       :prepend-icon="getLoadoutItemSlotPrependIcon(weaponIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, weaponIndex)"
                       @click:clear="editing.loadout[weaponIndex] = ''"
+                      @keydown.esc="editing.loadout[weaponIndex] = ''"
                     ></v-combobox>
                   </v-col>
                 </v-row>
@@ -549,7 +550,7 @@
                     <v-combobox
                       v-if="editing.loadout"
                       v-model="editing.loadout[toolsIndex]"
-                      :items="allUniqueLoadoutItemNames"
+                      :items="getValidToolNamesForSlot(toolsIndex)"
                       :label="getEditingLabelItemLabel(toolsIndex)"
                       :title="tooltipItemSlot"
                       clearable
@@ -563,6 +564,7 @@
                       :prepend-icon="getLoadoutItemSlotPrependIcon(toolsIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, toolsIndex)"
                       @click:clear="editing.loadout[toolsIndex] = ''"
+                      @keydown.esc="editing.loadout[toolsIndex] = ''"
                       ></v-combobox>
                   </v-col>
                 </v-row>
@@ -579,7 +581,7 @@
                     <v-combobox
                       v-if="editing.loadout"
                       v-model="editing.loadout[consumablesIndex]"
-                      :items="allUniqueLoadoutItemNames"
+                      :items="getValidConsumableNamesForSlot(consumablesIndex)"
                       :label="getEditingLabelItemLabel(consumablesIndex)"
                       :title="tooltipItemSlot"
                       clearable
@@ -593,6 +595,7 @@
                       :prepend-icon="getLoadoutItemSlotPrependIcon(consumablesIndex)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, consumablesIndex)"
                       @click:clear="editing.loadout[consumablesIndex] = ''"
+                      @keydown.esc="editing.loadout[consumablesIndex] = ''"
                       ></v-combobox>
                   </v-col>
                 </v-row>
@@ -655,6 +658,7 @@
     <script type="text/javascript" src="/vendor/vuetify.2.5.8.min.js"></script>
     <script type="text/javascript" src="/vendor/lodash.4.17.21.min.js"></script>
     <script type="text/javascript" src="/js/utils.js"></script>
+    <script type="text/javascript" src="/js/huntItems.js"></script>
     <script type="text/javascript" src="/js/estimator.js"></script>
     <script>
 
@@ -781,18 +785,18 @@
             const usedAsBase = bases.indexOf(this.editing.loadout.id) !== -1;
             return !usedAsBase;
           },
-          allUniqueLoadoutItemNames() {
-            const uniqueItemNames = new Set();
-            for (const loadout of this.loadouts) {
-              for (let i = 0; i <= 10; i++) {
-                const itemName = loadout[i];
-                if (itemName) {
-                  uniqueItemNames.add(itemName);
-                }
-              }
-            }
-            return Array.from(uniqueItemNames).sort();
-          },
+          // allUniqueLoadoutItemNames() {
+          //   const uniqueItemNames = new Set();
+          //   for (const loadout of this.loadouts) {
+          //     for (let i = 0; i <= 10; i++) {
+          //       const itemName = loadout[i];
+          //       if (itemName) {
+          //         uniqueItemNames.add(itemName);
+          //       }
+          //     }
+          //   }
+          //   return Array.from(uniqueItemNames).sort();
+          // },
           fileData() {
             return {
               version: 1,
@@ -879,11 +883,75 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          /**
+           * Weapons depend on their size:
+           * - Large and small
+           * - Medium and small
+           * - Medium and medium
+           * - Small and small
+           */
+          getValidWeaponNamesForSlot(weaponSlotIndex) {
+            const allWeaponNames = huntItems.weapons.map(weapon => weapon.name);
+
+            // weaponSlotIndex is either 1 or 2.
+            const secondaryIndex = weaponSlotIndex == 1 ? 2 : 1;
+            const secondaryWeaponName = this.editing.loadout[secondaryIndex];
+            if (!secondaryWeaponName) {
+              return allWeaponNames;
+            }
+
+            const secondaryWeapon = huntItems.weapons.filter(
+              weapon => weapon.name == secondaryWeaponName
+            )[0];
+            if (!secondaryWeapon) {
+              return allWeaponNames;
+            };
+
+            if (secondaryWeapon.size == 'large') {
+              return huntItems.weapons
+                .filter(weapon => weapon.size == 'small')
+                .map(weapon => weapon.name);
+            }
+            else if (secondaryWeapon.size == 'medium') {
+              return huntItems.weapons
+                .filter(weapon => ['small', 'medium'].includes(weapon.size))
+                .map(weapon => weapon.name);
+            }
+            // Small can be combined with anything.
+            return allWeaponNames;
+          },
+          /**
+           * Can not use a tool more than once.
+           */
+          getValidToolNamesForSlot(toolSlotIndex) {
+            const allToolNames = huntItems.tools.map(tool => tool.name);
+            const toolNamesAlreadyUsed = [
+              this.editing.loadout[3],
+              this.editing.loadout[4],
+              this.editing.loadout[5],
+              this.editing.loadout[6],
+            ];
+            return allToolNames.filter(
+              name => toolNamesAlreadyUsed.indexOf(name) === -1
+            );
+          },
+          /**
+           * Can use multiple consumables of the same type.
+           */
+          getValidConsumableNamesForSlot(consumableSlotIndex) {
+            const allConsumableNames = huntItems.consumables.map(
+              consumable => consumable.name
+            );
+            return allConsumableNames;
+          },
           getEditingLabelItemLabel(itemSlotIndex) {
             if (this.editing.loadout && this.editing.loadout.base) {
               const item = this.editing.loadout[itemSlotIndex];
               const resolvedItem = this.editingResolvedLoadout[itemSlotIndex];
-              if (resolvedItem != item) {
+              if (resolvedItem === null && item === '') {
+                return this.itemSlotLabels[itemSlotIndex];
+              }
+              if (resolvedItem !== item) {
                 return resolvedItem;
               }
             }
@@ -892,7 +960,7 @@
           isItemSlotInheritedFromBaseLoadout(itemSlotIndex, loadout, resolvedLoadout) {
             const item = loadout[itemSlotIndex];
             let resolvedItem = resolvedLoadout[itemSlotIndex];
-            if (resolvedItem === null && item == '') {
+            if (resolvedItem === null && item === '') {
               // Treat excludes from base loadout and empty slots in the
               // actual loadout as 'not inheriting', since the base does
               // not define something to inherit.
