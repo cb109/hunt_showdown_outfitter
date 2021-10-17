@@ -471,6 +471,7 @@
                 <!-- Base Loadout (optional) -->
                 <div
                   class="subtitle-2 mt-3 mb-3"
+                  style="max-width: 140px"
                   :class="{'clickable': editingLoadoutCanDefineBase}"
                   title="Expand/collapse base loadout"
                   @click="editing.expandBaseLoadout = !editing.expandBaseLoadout"
@@ -516,25 +517,45 @@
                   <v-col>
                     <v-combobox
                       v-if="editing.loadout"
-                      v-model="editing.loadout[weaponIndex]"
-                      :items="getValidWeaponNamesForSlot(weaponIndex)"
+                      :value="editing.loadout[weaponIndex]"
+                      :filter="onItemComboboxSearched"
+                      :items="getValidWeaponsForSlot(weaponIndex)"
+                      :item-value="(item) => item"
                       :label="getEditingLabelItemLabel(weaponIndex)"
                       :title="tooltipItemSlot"
                       clearable
                       solo
                       hide-details
                       hide-no-data
-                      auto-select-first
                       class="pt-0 mb-2"
                       :class="{
                         'muted': editing.loadout.excludes && editing.loadout.excludes[weaponIndex],
                       }"
                       :prepend-inner-icon="getLoadoutItemSlotPrependInnerIcon(weaponIndex)"
                       :prepend-icon="getLoadoutItemSlotPrependIcon(weaponIndex)"
+                      @change="onWeaponChosen(weaponIndex, $event)"
                       @click:prepend="onToggleLoadoutItemSlotIndexClicked($event, editing.loadout, weaponIndex)"
                       @click:clear="editing.loadout[weaponIndex] = ''"
                       @keydown.esc="editing.loadout[weaponIndex] = ''"
-                    ></v-combobox>
+                    >
+                      <template v-slot:selection="{ attrs, item, parent, selected }">
+                        <span v-if="typeof item === 'object'">
+                          {{ item ? item.legendary || item.name : '' }}
+                        </span>
+                        <span v-else>{{ item }}</span>
+                      </template>
+                      <template v-slot:item="{ index, item }">
+                        <v-list-item-content>
+                          <v-list-item-title>{{ item.legendary || item.name }}</v-list-item-title>
+                          <v-list-item-sub-title class="grey--text">
+                            {{ item.legendary ? item.name : '' }}
+                          </v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-actions class="grey--text text--lighten-2">
+                          <small>{{ item.size.toUpperCase() }}</small>
+                        </v-list-item-actions>
+                      </template>
+                    </v-combobox>
                   </v-col>
                 </v-row>
                 <!-- Tools -->
@@ -883,6 +904,23 @@
           this.setEstimationScreenSizeDefaults();
         },
         methods: {
+          onWeaponChosen(weaponIndex, item) {
+            // Either free user-input string, or resolved item name already.
+            let itemName = item;
+            if (typeof item == 'object') {
+              // Selected an item from the autocomplete list, now resolve a name.
+              // Alternatively, may have clicked the clear button and it's null.
+              itemName = item ? item.legendary || item.name : '';
+            }
+            this.editing.loadout[weaponIndex] = itemName;
+          },
+          onItemComboboxSearched(item, queryText, itemText) {
+            queryText = queryText.toLowerCase();
+            return (
+              (item.legendary || '').toLowerCase().indexOf(queryText) > -1 ||
+              item.name.toLowerCase().indexOf(queryText) > -1
+            );
+          },
           /**
            * Weapons depend on their size:
            * - Large and small
@@ -890,16 +928,12 @@
            * - Medium and medium
            * - Small and small
            */
-          getValidWeaponNamesForSlot(weaponSlotIndex) {
-            const allWeaponNames = huntItems.weapons.map(
-              weapon => weapon.legendary || weapon.name
-            );
-
+          getValidWeaponsForSlot(weaponSlotIndex) {
             // weaponSlotIndex is either 1 or 2.
             const secondaryIndex = weaponSlotIndex == 1 ? 2 : 1;
             const secondaryWeaponName = this.editing.loadout[secondaryIndex];
             if (!secondaryWeaponName) {
-              return allWeaponNames;
+              return huntItems.weapons;
             }
 
             const secondaryWeapon = huntItems.weapons.filter(
@@ -911,21 +945,19 @@
               }
             )[0];
             if (!secondaryWeapon) {
-              return allWeaponNames;
+              return huntItems.weapons;
             };
 
             if (secondaryWeapon.size == 'large') {
               return huntItems.weapons
-                .filter(weapon => weapon.size == 'small')
-                .map(weapon => weapon.legendary || weapon.name);
+                .filter(weapon => weapon.size == 'small');
             }
             else if (secondaryWeapon.size == 'medium') {
               return huntItems.weapons
-                .filter(weapon => ['small', 'medium'].includes(weapon.size))
-                .map(weapon => weapon.legendary || weapon.name);
+                .filter(weapon => ['small', 'medium'].includes(weapon.size));
             }
             // Small can be combined with anything.
-            return allWeaponNames;
+            return huntItems.weapons;
           },
           /**
            * Can not use a tool more than once.

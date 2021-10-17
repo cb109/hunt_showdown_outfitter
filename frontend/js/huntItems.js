@@ -121,3 +121,4 @@ const huntItems = {
     {category: 'consumables', name: 'Weak Vitality Shot'},
   ],
 };
+huntItems.all = [].concat(huntItems.weapons, huntItems.tools, huntItems.consumables);
