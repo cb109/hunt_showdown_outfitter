@@ -226,6 +226,20 @@ def equip_loadout_item_slot(
     else:
         _unequip(item_slot_index)
 
+    # TODOs:
+    #
+    # Tools can only be used once in a single slot, and since we don't
+    # know if the Hunter already uses the desired tool in one, we can
+    # only be sure this works by unequipping all tools first.
+    #
+    # Consumables can stack, but the UI logic for that is a bit special:
+    # Adding a consumable we already have will add it to the slot that
+    # holds the first one, then starting from the right going to the
+    # left, the game will disable the first empty slot it finds. To
+    # allow stacking with any pre-existing loadout, we first need to
+    # unequip all of them, then figure out if a consumable is used
+    # multiple times and determine a slot-order to use for that.
+
     item_name = loadout[item_slot_index]
     if not item_name:
         return
