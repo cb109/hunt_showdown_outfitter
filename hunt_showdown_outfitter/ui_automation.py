@@ -228,6 +228,11 @@ def equip_loadout_item_slot(
 
     # TODOs:
     #
+    # Dual wielding is only possible for certain weapons (normal
+    # versions and their legendaries can usually be mixed). We'd need an
+    # extra doubleclick if dualing the same gun, or an extra search and
+    # equip step for the same weapon slot if mixing.
+    #
     # Tools can only be used once in a single slot, and since we don't
     # know if the Hunter already uses the desired tool in one, we can
     # only be sure this works by unequipping all tools first.
