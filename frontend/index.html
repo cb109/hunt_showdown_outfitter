@@ -355,21 +355,6 @@
                         title="Edit this Loadout"
                         @click="editLoadout(loadout)"
                       >
-                        <!-- Toggle Favorite -->
-                        <div v-if="hover || loadout.favorite">
-                          <v-btn
-                            small
-                            icon
-                            class="my-0 ml-0 mr-2"
-                            :class="{'primary--text': loadout.favorite}"
-                            title="Un/favorite this Loadout"
-                            @click.stop="favoriteLoadout(loadout)"
-                          >
-                            <v-icon small>
-                              {{ loadout.favorite ? 'mdi-heart' : 'mdi-heart-outline' }}
-                            </v-icon>
-                          </v-btn>
-                        </div>
                         <v-list-item-content @dblclick="equipLoadout(loadout)">
                           <v-list-item-title
                             :class="{
@@ -393,11 +378,9 @@
                           </v-list-item-subtitle>
                         </v-list-item-content>
                         <!-- Action Buttons -->
-                        <div
-                          v-if="hover"
-                          class="d-flex"
-                        >
+                        <div class="d-flex align-center">
                           <v-btn
+                            v-if="hover"
                             icon
                             color="primary"
                             title="Equip this Loadout"
@@ -406,6 +389,7 @@
                             <v-icon>mdi-play</v-icon>
                           </v-btn>
                           <v-btn
+                            v-if="hover"
                             icon
                             title="Duplicate this Loadout"
                             @click.stop="duplicateLoadout(loadout)"
@@ -413,12 +397,24 @@
                             <v-icon>mdi-content-copy</v-icon>
                           </v-btn>
                           <v-btn
+                            v-if="hover"
                             icon
                             color="error"
                             title="Delete this Loadout"
                             @click.stop="askDeleteLoadout(loadout)"
                           >
                             <v-icon>mdi-delete-outline</v-icon>
+                          </v-btn>
+                          <v-btn
+                            v-if="hover || loadout.favorite"
+                            icon
+                            :class="{'primary--text': loadout.favorite}"
+                            title="Un/favorite this Loadout"
+                            @click.stop="favoriteLoadout(loadout)"
+                          >
+                            <v-icon>
+                              {{ loadout.favorite ? 'mdi-heart' : 'mdi-heart-outline' }}
+                            </v-icon>
                           </v-btn>
                         </div>
                       </v-list-item>
@@ -1234,8 +1230,15 @@
             }
           },
           favoriteLoadout(loadout) {
-            this.$set(loadout, 'favorite', !loadout.favorite);
-            this.saveLoadoutById(loadout, loadout.id);
+            const newFavoriteValue = !loadout.favorite;
+
+            if (this.editing.loadout && this.editing.loadout.id == loadout.id) {
+              this.editing.loadout.favorite = newFavoriteValue;
+              this.saveEditingLoadout();
+            } else {
+              loadout.favorite = newFavoriteValue;
+              this.saveLoadoutById(loadout, loadout.id);
+            }
           },
           equipLoadout(loadout) {
             this.showSnackbarText('Equipping "' + loadout.label + '"...');
