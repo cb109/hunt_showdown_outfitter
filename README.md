@@ -1,3 +1,5 @@
+**ATTENTION**: With the arrival of native [Loadout Presets in Patch 1.7](https://store.steampowered.com/news/app/594650/view/3102412650198268597), this tool is now pretty much obsolete, which is good news :) !
+
 
 ![](docs/robot.jpg)
 
