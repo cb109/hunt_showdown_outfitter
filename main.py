@@ -2,6 +2,7 @@
 #   the keyboard input to work!
 
 import json
+import os
 import platform
 import sys
 
@@ -12,23 +13,20 @@ from hunt_showdown_outfitter import api  # This exposes the eel functions.
 from hunt_showdown_outfitter import ui_automation
 
 
-def open_gui():
-    page = "index.html"
-    eel_kwargs = {
-        "size": (1440, 1024),
-        "port": 8066,
-    }
+def open_electron_gui():
+    def resource_path(rel_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller."""
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, rel_path)
 
     eel.init("frontend")
-    try:
-        eel.start(page, **eel_kwargs)
-    except EnvironmentError:
-        # If default browser (Chrome) isn't found, fallback to Microsoft Edge on Win10 or greater
-        # https://github.com/ChrisKnott/Eel/blob/master/examples/07%20-%20CreateReactApp/eel_CRA.py#L68-L70
-        if sys.platform in ["win32", "win64"] and int(platform.release()) >= 10:
-            eel.start(page, mode="edge", **eel_kwargs)
-        else:
-            raise
+    eel.browsers.set_path(
+        "electron", resource_path("node_modules/electron/dist/electron.exe")
+    )
+    eel.start("index.html", mode="electron", port=8066)
 
 
 def equip_loadout_from_cli_args(input_file, loadout):
@@ -77,8 +75,9 @@ def equip_loadout_from_cli_args(input_file, loadout):
 def cli(input_file, loadout):
     if input_file and loadout:
         equip_loadout_from_cli_args(input_file, loadout)
-    else:
-        open_gui()
+        return
+
+    open_electron_gui()
 
 
 if __name__ == "__main__":

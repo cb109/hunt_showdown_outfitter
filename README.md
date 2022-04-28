@@ -51,7 +51,7 @@ Phew, that's a relief! I can give no guarantees though (maybe they change their 
 - All equipping only works when on the `Roster > Equipment` page in game!
 
 ### Installation
-- Download the latest `hunt_showdown_outfitter.exe` [from this page](https://github.com/cb109/hunt_showdown_outfitter/releases) (you can find the files under the release **Assets**)
+- Download the latest `hunt_showdown_outfitter.exe` [from the Releases page](https://github.com/cb109/hunt_showdown_outfitter/releases) (you can find the files under the release **Assets**)
 
 ### Initial Setup
 - Launch `Hunt: Showdown` and set it to use `Window Mode: Borderless` temporarily (otherwise the screenshot debugging below won't work).
@@ -116,12 +116,20 @@ Example:
 
 ## Development
 
+Windows only for now, as we need Windows specific APIs.
+
 ### Prerequisites
 
 Download and install Python 3.7+
 
 ```bash
 pip install -r requirements.txt
+```
+
+Download and install nodejs/npm then install electron like:
+
+```bash
+npm install
 ```
 
 ### Run local instance

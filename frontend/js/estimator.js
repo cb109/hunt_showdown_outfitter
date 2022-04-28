@@ -23,6 +23,7 @@ const uiCoordinatesEstimator = {
   sampleAreaEndY: 1080,
 
   sampleUiCoordinates: {
+    // Items
     '1': {'x': '1810', 'y': '305'},
     '2': {'x': '1810', 'y': '455'},
     '3': {'x': '1810', 'y': '600'},
@@ -33,6 +34,21 @@ const uiCoordinatesEstimator = {
     '8': {'x': '1900', 'y': '750'},
     '9': {'x': '1990', 'y': '750'},
     '10': {'x': '2085', 'y': '750'},
+
+    // Special ammo
+    '1_special_large_1': {'x': '2155', 'y': '310'},
+    '1_special_large_2': {'x': '2205', 'y': '310'},
+    '1_special_medium_1': {'x': '2065', 'y': '310'},
+    '1_special_medium_2': {'x': '2115', 'y': '310'},
+    '1_special_small': {'x': '2065', 'y': '310'},
+
+    '2_special_large_1': {'x': '2155', 'y': '460'},
+    '2_special_large_2': {'x': '2205', 'y': '460'},
+    '2_special_medium_1': {'x': '2065', 'y': '460'},
+    '2_special_medium_2': {'x': '2115', 'y': '460'},
+    '2_special_small': {'x': '2065', 'y': '460'},
+
+    // Additional UI elements
     'search_box': {'x': '870', 'y': '230'},
     'first_item_in_list': {'x': '985', 'y': '310'},
     'remove_filters_button': {'x': '1660', 'y': '225'},

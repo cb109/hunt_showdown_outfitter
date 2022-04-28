@@ -206,8 +206,6 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict, ui_coordinates: dict
     Example for the shape of a loadout:
 
         {
-            "id": 2,
-            "label": 'Sparks / Frag',
             "1": "The Reckoning",
             "2": "Copperhead",
             "3": "The Tanto",
@@ -218,6 +216,11 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict, ui_coordinates: dict
             "8": "Fire Bomb",
             "9": "Weak Antidote Shot",
             "10": "Frag Bomb",
+            "base": None,
+            "excludes": {},
+            "favorite": False
+            "id": 2,
+            "label": 'Sparks / Frag',
         }
 
     Example for the shape of ui_coordinates:
@@ -234,8 +237,10 @@ def put_hunt_in_foreground_and_equip_loadout(loadout: dict, ui_coordinates: dict
             "9": {"x": 1990, "y": 750},
             "10": {"x": 2085, "y": 750},
             "search_box": {"x": 870, "y": 230},
-            "first_item_in_list": {"x": 950, "y": 310},
-            "remove_filters_button": {"x": 1660, "y": 225},
+            "first_item_in_list": {"x": "950", "y": "310"},
+            "remove_filters_button": {"x": "1660", "y": "225"},
+            "discard_item_dialog_yes_button": {"x": "1111", "y": "728"},
+            "transaction_not_possible_dialog_ok_button": {"x": "1290", "y": "752"},
         }
 
     Please note all incoming keys are strings, not numbers.
